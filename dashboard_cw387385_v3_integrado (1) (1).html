@@ -1,0 +1,1063 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Dashboard CW387385 — A1018 EPM Doble Tiro</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@2.44.0/tabler-icons.min.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
+<style>
+:root{--epm:#005baa;--epm-d:#003f7a;--epm-l:#e6f0fa;--s0:#f1f0ea;--s1:#f7f7f5;--s2:#fff;--tp:#0b0b0b;--ts:#52514e;--tm:#898781;--bd:rgba(11,11,11,.10);--bds:#c3c2b7;--r:8px;
+--ok:#3B6D11;--okl:#EAF3DE;--okb:#C0DD97;--wn:#633806;--wnl:#FAEEDA;--wnb:#FAC775;--bad:#A32D2D;--badl:#FCEBEB;--badb:#F7C1C1}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--s0);color:var(--tp);font-size:14px}
+.hidden{display:none!important}
+#app{height:100vh;display:flex;flex-direction:column;overflow:hidden}
+/* Topbar */
+.topbar{background:#7BB835;color:#fff;height:56px;display:flex;align-items:center;padding:0 1.1rem;gap:12px;flex-shrink:0}
+.tl{display:flex;align-items:center;gap:9px}
+.tl-ic{width:30px;height:30px;background:rgba(255,255,255,.18);border-radius:7px;display:flex;align-items:center;justify-content:center;font-size:15px}
+.tl-t{font-size:13px;font-weight:600}.tl-s{font-size:10px;opacity:.6;display:block;font-weight:400}
+.tdiv{width:1px;height:26px;background:rgba(255,255,255,.35);margin:0 4px}
+.tct{font-size:11px;opacity:.88;font-weight:500}.tsp{flex:1}
+.tuser{display:flex;align-items:center;gap:8px}
+.av{width:30px;height:30px;border-radius:50%;background:rgba(255,255,255,.2);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:#fff;border:1.5px solid rgba(255,255,255,.3)}
+.tun{font-size:12px;font-weight:500}.tur{font-size:10px;opacity:.6}
+/* Layout */
+.main{display:flex;flex:1;overflow:hidden}
+.sidebar{width:195px;background:var(--s2);border-right:1px solid var(--bd);padding:.65rem .4rem;flex-shrink:0;overflow-y:auto}
+.ns{font-size:10px;font-weight:600;color:var(--tm);text-transform:uppercase;letter-spacing:.07em;padding:.5rem .7rem .25rem}
+.ni{display:flex;align-items:center;gap:8px;padding:7px 9px;border-radius:var(--r);font-size:12px;color:var(--ts);cursor:pointer;margin-bottom:1px;transition:all .15s;user-select:none}
+.ni:hover{background:var(--s1);color:var(--tp)}
+.ni.active{background:var(--epm-l);color:var(--epm);font-weight:600}
+.ni i{font-size:16px;width:18px;text-align:center}
+.content{flex:1;overflow-y:auto;padding:1.1rem;background:var(--s0)}
+.page{display:none}.page.active{display:block}
+/* Base components */
+.ph{display:flex;align-items:center;justify-content:space-between;margin-bottom:.85rem;flex-wrap:wrap;gap:.5rem}
+.ph-t{font-size:15px;font-weight:600;display:flex;align-items:center;gap:8px}
+.ph-m{font-size:11px;color:var(--tm);background:var(--s2);border:1px solid var(--bd);padding:3px 9px;border-radius:20px;display:flex;align-items:center;gap:5px}
+.card{background:var(--s2);border:1px solid var(--bd);border-radius:12px;padding:1rem;margin-bottom:.85rem}
+.kgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(138px,1fr));gap:9px;margin-bottom:.85rem}
+.kgrid7{display:grid;grid-template-columns:repeat(7,1fr);gap:8px;margin-bottom:.85rem}
+.kcard{background:var(--s2);border:1px solid var(--bd);border-radius:10px;padding:.8rem .9rem;transition:border-left-color .2s}
+.kcard.b-ok{border-left:3px solid var(--ok)}.kcard.b-wn{border-left:3px solid #EF9F27}
+.kcard.b-bad{border-left:3px solid var(--bad)}.kcard.b-epm{border-left:3px solid var(--epm)}
+.kl{font-size:11px;color:var(--tm);font-weight:500;margin-bottom:3px}
+.kv{font-size:21px;font-weight:600}
+.kd{font-size:11px;margin-top:2px}
+.dok{color:var(--ok)}.dwarn{color:var(--wn)}.dbad{color:var(--bad)}.depm{color:var(--epm)}
+/* Section title */
+.st{font-size:13px;font-weight:600;margin-bottom:.75rem;display:flex;align-items:center;gap:7px}
+.st i{font-size:16px;color:var(--epm)}
+/* Pills */
+.pill{display:inline-block;padding:2px 8px;border-radius:20px;font-size:11px;font-weight:600}
+.pok{background:var(--okl);color:var(--ok)}.pwarn{background:var(--wnl);color:var(--wn)}
+.pbad{background:var(--badl);color:var(--bad)}.pinfo{background:var(--epm-l);color:var(--epm-d)}.pgray{background:var(--s1);color:var(--tm)}
+/* Alerts */
+.alert{padding:.6rem .9rem;border-radius:var(--r);font-size:12px;margin-bottom:.75rem;display:flex;align-items:flex-start;gap:7px}
+.ao{background:var(--okl);color:var(--ok);border:1px solid var(--okb)}
+.ai{background:var(--epm-l);color:var(--epm-d);border:1px solid #B5D4F4}
+.aw2{background:var(--wnl);color:var(--wn);border:1px solid var(--wnb)}
+.ab2{background:var(--badl);color:var(--bad);border:1px solid var(--badb)}
+/* Tables */
+.dtable{width:100%;border-collapse:collapse;font-size:12px}
+.dtable th{font-size:11px;font-weight:600;color:var(--tm);text-align:left;padding:6px 7px;border-bottom:1px solid var(--bd)}
+.dtable td{padding:6px 7px;border-bottom:1px solid var(--bd);vertical-align:middle}
+.dtable tr:last-child td{border:none}
+.dtable tbody tr:hover td{background:var(--s0)}
+/* Progress bars */
+.pw{background:var(--s1);border-radius:20px;height:7px;overflow:hidden}
+.pb{height:100%;border-radius:20px}
+.pb-b{background:#185FA5}.pb-e{background:var(--ok)}.pb-ok{background:#639922}.pb-w{background:#EF9F27}.pb-bad{background:#D85A30}.pb-epm{background:var(--epm)}
+/* Grids */
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:.85rem}
+.g3{display:grid;grid-template-columns:repeat(3,1fr);gap:.85rem}
+.g4{display:grid;grid-template-columns:repeat(4,1fr);gap:.75rem}
+/* Misc */
+.evm-c{text-align:center;padding:.6rem .4rem}
+.evm-l{font-size:10px;color:var(--tm);font-weight:600;text-transform:uppercase;letter-spacing:.05em;margin-bottom:3px}
+.evm-v{font-size:18px;font-weight:700}
+.tab-row{display:flex;gap:0;border-bottom:2px solid var(--bd);margin-bottom:.85rem}
+.tbtn{padding:6px 14px;font-size:12px;background:transparent;border:none;border-bottom:2px solid transparent;cursor:pointer;color:var(--ts);margin-bottom:-2px;font-weight:500}
+.tbtn.active{color:var(--epm);border-bottom-color:var(--epm)}
+.fg{display:flex;flex-direction:column;gap:4px}
+.fg label{font-size:12px;font-weight:500;color:var(--ts)}
+.fg input,.fg select,.fg textarea{padding:7px 10px;border:1px solid var(--bds);border-radius:var(--r);font-size:13px;background:var(--s2);color:var(--tp);font-family:inherit}
+.fg input:focus,.fg select:focus{outline:none;border-color:var(--epm);box-shadow:0 0 0 2px var(--epm-l)}
+.frow{display:grid;grid-template-columns:1fr 1fr;gap:.65rem;margin-bottom:.65rem}
+.frow4{display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:.65rem;margin-bottom:.65rem}
+.frow5{display:grid;grid-template-columns:1fr 1fr 1fr 1fr 1fr;gap:.65rem;margin-bottom:.65rem}
+.btsv{padding:8px 16px;background:var(--epm);color:#fff;border:none;border-radius:var(--r);font-size:13px;font-weight:600;cursor:pointer;display:inline-flex;align-items:center;gap:6px}
+.btsv:hover{background:var(--epm-d)}
+.btsm{padding:6px 12px;font-size:12px;border:1px solid var(--bds);border-radius:var(--r);background:transparent;cursor:pointer;color:var(--ts)}
+.btsm:hover{background:var(--s1)}
+.btdng{padding:4px 8px;font-size:11px;border:1px solid var(--badb);border-radius:var(--r);background:transparent;cursor:pointer;color:var(--bad)}
+.btn-upload{padding:11px;background:var(--epm);color:#fff;border:none;border-radius:var(--r);font-size:14px;font-weight:600;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;width:100%}
+.btn-upload:hover{background:var(--epm-d)}
+.cp-item{display:flex;align-items:flex-start;gap:.65rem;padding:.65rem 0;border-bottom:1px solid var(--bd)}
+.cp-item:last-child{border:none}
+.cp-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0;margin-top:3px}
+.urow{display:flex;align-items:center;gap:10px;padding:.6rem 0;border-bottom:1px solid var(--bd)}
+.urow:last-child{border:none}
+.uav{width:34px;height:34px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;flex-shrink:0}
+.role-a{background:var(--epm-l);color:var(--epm-d);font-size:11px;font-weight:600;padding:2px 8px;border-radius:20px}
+.role-c{background:var(--okl);color:var(--ok);font-size:11px;font-weight:600;padding:2px 8px;border-radius:20px}
+.drop-zone{border:2px dashed var(--bds);border-radius:12px;padding:2rem 1rem;text-align:center;cursor:pointer;background:var(--s1);transition:all .2s;margin-bottom:.85rem}
+.drop-zone:hover,.drop-zone.dragover{border-color:var(--epm);background:var(--epm-l)}
+/* EVM-specific */
+.vbadge{display:inline-flex;align-items:center;gap:5px;padding:3px 9px;border-radius:20px;font-size:11px;font-weight:700}
+.vb-act{background:rgba(255,255,255,.22);color:#fff;border:1px solid rgba(255,255,255,.4)}
+.vb-pend{background:var(--s1);color:var(--tm);border:1px solid var(--bd)}
+.legend{display:flex;flex-wrap:wrap;gap:14px;margin-bottom:.75rem}
+.leg{display:flex;align-items:center;gap:6px;font-size:11px;color:var(--ts)}
+.ll{width:22px;height:3px;border-radius:2px}
+.ld{width:22px;height:0;border-top:2.5px dashed}
+.evm-strip{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:.7rem}
+.evm-chip{background:var(--s0);border-radius:6px;padding:4px 10px;font-size:11px;display:flex;gap:5px;align-items:center;border:.5px solid var(--bd)}
+.evm-chip strong{font-weight:700}
+.diff-pos{color:var(--ok);font-weight:600}.diff-neg{color:var(--bad);font-weight:600}.diff-neu{color:var(--tm)}
+.pdot{width:10px;height:10px;border-radius:50%;flex-shrink:0;display:inline-block;margin-right:6px}
+/* Chart containers */
+.chart-360{position:relative;height:360px}
+.chart-210{position:relative;height:210px}
+.chart-280{position:relative;height:280px}
+/* Mobile nav: hamburger, drawer, backdrop, bottom nav */
+.hamburger{display:none;background:rgba(255,255,255,.18);border:none;width:34px;height:34px;border-radius:7px;color:#fff;font-size:18px;align-items:center;justify-content:center;cursor:pointer;flex-shrink:0;padding:0}
+.hamburger:active{background:rgba(255,255,255,.32)}
+.sidebar-close{display:none}
+.backdrop{display:none}
+.bottom-nav{display:none;background:var(--s2);border-top:1px solid var(--bd);padding:4px 0;padding-bottom:calc(4px + env(safe-area-inset-bottom));align-items:stretch}
+.bnav-item{flex:1;display:flex;flex-direction:column;align-items:center;gap:2px;padding:6px 2px;color:var(--tm);cursor:pointer;font-size:9px;user-select:none}
+.bnav-item i{font-size:19px}
+.bnav-item.active{color:#7BB835}
+@media(max-width:1100px){.kgrid7{grid-template-columns:repeat(4,1fr)}}
+@media(max-width:750px){
+  .kgrid7{grid-template-columns:repeat(2,1fr)}
+  .g2{grid-template-columns:1fr}
+  .g4{grid-template-columns:1fr 1fr}
+  .frow,.frow4,.frow5{grid-template-columns:1fr}
+  .card{overflow-x:auto;-webkit-overflow-scrolling:touch}
+  .dtable{min-width:620px}
+  .chart-360{height:260px}
+  .chart-210{height:185px}
+  .chart-280{height:230px}
+  input,select,textarea{font-size:16px!important}
+  .ph select{width:100%}
+  .btsv,.btsm{padding:10px 16px}
+  .btdng{padding:6px 9px}
+  .drop-zone{padding:1.5rem 1rem}
+  .tab-row{overflow-x:auto;flex-wrap:nowrap;-webkit-overflow-scrolling:touch}
+  .tbtn{flex-shrink:0}
+  .hamburger{display:flex}
+  .sidebar{position:fixed;top:56px;left:0;bottom:0;width:78%;max-width:280px;z-index:200;transform:translateX(-100%);transition:transform .25s ease;box-shadow:2px 0 14px rgba(0,0,0,.18)}
+  .sidebar.open{transform:translateX(0)}
+  .sidebar-close{display:flex;justify-content:flex-end;padding:2px 4px 10px;color:var(--tm);font-size:20px;cursor:pointer}
+  .backdrop{display:none;position:fixed;top:56px;left:0;right:0;bottom:0;background:rgba(0,0,0,.42);z-index:150}
+  .backdrop.active{display:block}
+  .bottom-nav{display:flex;position:fixed;bottom:0;left:0;right:0;z-index:120}
+  .content{padding-bottom:72px}
+  .topbar{padding:0 .75rem;gap:8px}
+  .tct,.tdiv,.tl-s,.tun,.tur{display:none!important}
+}
+</style>
+</head>
+<body>
+<div id="app">
+<!-- ═══ TOPBAR ═══ -->
+<div class="topbar">
+  <button class="hamburger" onclick="toggleSidebar()" aria-label="Abrir menú"><i class="ti ti-menu-2" aria-hidden="true"></i></button>
+  <div class="tl">
+    <div style="flex-shrink:0;background:#fff;border-radius:8px;padding:3px 8px;display:flex;align-items:center;box-shadow:0 1px 3px rgba(0,0,0,.15)">
+      <img src="data:image/png;base64,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" height="30" alt="EPM Logo" style="display:block">
+    </div>
+    <div style="border-left:1px solid rgba(255,255,255,.35);padding-left:12px;margin-left:4px">
+      <span class="tl-t" style="font-size:14px;font-weight:700;letter-spacing:-.3px;color:#fff">Dobletiro La Ayurá</span>
+      <span class="tl-s" style="font-size:10px;opacity:.85;display:block;margin-top:1px;color:rgba(255,255,255,.9)">Empresas Públicas de Medellín</span>
+    </div>
+  </div>
+  <div class="tdiv"></div>
+  <span class="tct">CW387385 · A1018 Doble Tiro · $867.2M COP · 06/Jul–31/Dic 2026</span>
+  <div class="tsp"></div>
+  <div class="tuser">
+    <span style="display:inline-flex;align-items:center;gap:5px;padding:3px 9px;border-radius:20px;font-size:11px;font-weight:700;background:rgba(255,255,255,.22);color:#fff;border:1px solid rgba(255,255,255,.4);margin-right:6px"><i class="ti ti-file-check" style="font-size:11px"></i>V1 Baseline</span>
+    <div style="text-align:right"><div class="tun" id="tn">Admin</div><div class="tur" id="te">carolina.gomez@epm.com.co</div></div>
+    <div class="av" id="tav">CR</div>
+  </div>
+</div>
+<!-- ═══ MAIN ═══ -->
+<div class="main">
+<!-- SIDEBAR -->
+<nav class="sidebar" id="sidebar">
+  <div class="sidebar-close" onclick="closeSidebarMobile()" aria-label="Cerrar menú"><i class="ti ti-x" aria-hidden="true"></i></div>
+  <div class="ns">Resumen</div>
+  <div class="ni active" data-page="dashboard" onclick="sp('dashboard',this)"><i class="ti ti-layout-dashboard"></i>Dashboard</div>
+  <div class="ni" data-page="curva" onclick="sp('curva',this)"><i class="ti ti-chart-line"></i>Curva S</div>
+  <div class="ns">Seguimiento</div>
+  <div class="ni" data-page="kpi" onclick="sp('kpi',this)"><i class="ti ti-target"></i>KPIs</div>
+  <div class="ni" data-page="actividades" onclick="sp('actividades',this)"><i class="ti ti-list-check"></i>Actividades</div>
+  <div class="ni" data-page="ruta" onclick="sp('ruta',this)"><i class="ti ti-route"></i>Ruta crítica</div>
+  <div class="ns">Control</div>
+  <div class="ni" data-page="cantidades" onclick="sp('cantidades',this)"><i class="ti ti-clipboard-list"></i>Cantidades</div>
+  <div class="ni" data-page="evm" onclick="sp('evm',this)"><i class="ti ti-chart-dots-3"></i>EVM Multicurva</div>
+  <div class="ni" data-page="cronograma" onclick="sp('cronograma',this)"><i class="ti ti-file-upload"></i>Cargar cronograma</div>
+  <div class="ni hidden" id="nav-u" data-page="usuarios" onclick="sp('usuarios',this)"><i class="ti ti-users"></i>Usuarios</div>
+</nav>
+<div class="backdrop" id="backdrop" onclick="closeSidebarMobile()"></div>
+<!-- CONTENT -->
+<div class="content">
+
+<!-- ═══ DASHBOARD ═══ -->
+<div class="page active" id="page-dashboard">
+  <div class="ph"><div class="ph-t">Resumen ejecutivo — CW387385</div><span class="ph-m"><i class="ti ti-calendar" style="font-size:11px"></i><span id="dash-sem-lbl"> Sem 1 · Jul 2026</span></span></div>
+  <div class="alert aw2"><i class="ti ti-alert-triangle" style="flex-shrink:0"></i><span>Contrato CW387385 iniciado <strong>06/Jul/2026</strong>. Fase activa: <strong>Negociación y Diseño</strong>. Cronograma V1 cargado. 129 días hábiles al cierre.</span></div>
+  <div class="kgrid">
+    <div class="kcard"><div class="kl">Avance general</div><div class="kv depm" id="dash-avance">4%</div><div class="kd dwarn">Sem 1 de 26</div></div>
+    <div class="kcard"><div class="kl">Valor contrato</div><div class="kv" style="font-size:16px">$867.2M</div><div class="kd" style="color:var(--tm)">COP</div></div>
+    <div class="kcard"><div class="kl">Anticipo (20% bienes)</div><div class="kv" style="font-size:16px;color:var(--epm)">$95.98M</div><div class="kd" style="color:var(--tm)">08/Jul/2026</div></div>
+    <div class="kcard"><div class="kl">Ítems contratados</div><div class="kv">62</div><div class="kd" style="color:var(--tm)">4 tipos</div></div>
+    <div class="kcard"><div class="kl">SPI</div><div class="kv dok" id="dash-spi">1.00</div><div class="kd dok" id="dash-spi-lbl">Inicio OK</div></div>
+    <div class="kcard"><div class="kl">CPI</div><div class="kv dok" id="dash-cpi">1.00</div><div class="kd dok" id="dash-cpi-lbl">En costo</div></div>
+  </div>
+  <div class="g2">
+    <div class="card">
+      <div class="st"><i class="ti ti-chart-bar"></i>Valor por tipo de suministro</div>
+      <div style="margin-bottom:.9rem"><div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:5px"><span style="font-weight:500">Bienes + IVA (7 ítems)</span><span style="font-weight:600;color:var(--epm)">$571.1M · 66%</span></div><div class="pw" style="height:9px"><div class="pb pb-e" style="width:66%"></div></div></div>
+      <div style="margin-bottom:.9rem"><div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:5px"><span style="font-weight:500">Obra Civil (47 ítems)</span><span style="font-weight:600;color:#185FA5">$314.3M · 36%</span></div><div class="pw" style="height:9px"><div class="pb pb-b" style="width:36%"></div></div></div>
+      <div style="margin-bottom:.9rem"><div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:5px"><span style="font-weight:500">Consultoría (4 ítems)</span><span style="font-weight:600;color:#854F0B">$46.4M · 5%</span></div><div class="pw" style="height:9px"><div class="pb pb-w" style="width:5%"></div></div></div>
+      <div><div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:5px"><span style="font-weight:500">Ambiental (4 ítems)</span><span style="font-weight:600;color:var(--ok)">$34.0M · 4%</span></div><div class="pw" style="height:9px"><div class="pb pb-ok" style="width:4%"></div></div></div>
+    </div>
+    <div class="card">
+      <div class="st"><i class="ti ti-calendar-time"></i>Fases del cronograma</div>
+      <table class="dtable">
+        <thead><tr><th>Fase</th><th>Inicio</th><th>Fin</th><th>Budget</th><th>Estado</th></tr></thead>
+        <tbody>
+          <tr><td style="font-weight:600">Negociación</td><td>06/Jul</td><td>08/Jul</td><td style="font-size:11px">$8.7M</td><td><span class="pill pok">Activo</span></td></tr>
+          <tr><td style="font-weight:600">Diseño e Ing.</td><td>09/Jul</td><td>14/Oct</td><td style="font-size:11px">$60.3M</td><td><span class="pill pwarn">Próximo</span></td></tr>
+          <tr><td style="font-weight:600">Compras</td><td>15/Oct</td><td>23/Oct</td><td style="font-size:11px">$43.4M</td><td><span class="pill pgray">Pendiente</span></td></tr>
+          <tr><td style="font-weight:600">Producción Premset</td><td>08/Oct</td><td>08/Dic</td><td style="font-size:11px">$260.2M</td><td><span class="pill pgray">Pendiente</span></td></tr>
+          <tr><td style="font-weight:600">Construcción Civil</td><td>26/Oct</td><td>20/Nov</td><td style="font-size:11px">$173.4M</td><td><span class="pill pgray">Pendiente</span></td></tr>
+          <tr><td style="font-weight:600">Montaje Eléctrico</td><td>23/Nov</td><td>30/Dic</td><td style="font-size:11px">$190.8M</td><td><span class="pill pgray">Pendiente</span></td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+  <div class="card">
+    <div class="st"><i class="ti ti-chart-dots-3"></i>EVM — Estado actual (Sem 1)</div>
+    <div class="g4">
+      <div class="evm-c"><div class="evm-l">BAC total</div><div class="evm-v">$867.2M</div><div style="font-size:10px;color:var(--tm)">Valor contrato</div></div>
+      <div class="evm-c"><div class="evm-l">PV sem 1</div><div class="evm-v depm">$34.7M</div><div style="font-size:10px;color:var(--tm)">4% planificado</div></div>
+      <div class="evm-c"><div class="evm-l">EV sem 1</div><div class="evm-v dok" id="dash-ev">$34.7M</div><div style="font-size:10px;color:var(--tm)">Ganado a fecha</div></div>
+      <div class="evm-c"><div class="evm-l">EAC</div><div class="evm-v depm" id="dash-eac">$867.2M</div><div style="font-size:10px;color:var(--tm)">Pronóstico al cierre</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ CURVA S ═══ -->
+<div class="page" id="page-curva">
+  <div class="ph"><div class="ph-t">Curva S — CW387385</div><span class="ph-m">129 días hábiles · V1 Baseline</span></div>
+  <div class="tab-row">
+    <button class="tbtn active" onclick="setCurva('gral',this)">General</button>
+    <button class="tbtn" onclick="setCurva('civil',this)">Obra Civil</button>
+    <button class="tbtn" onclick="setCurva('bienes',this)">Bienes</button>
+    <button class="tbtn" onclick="setCurva('serv',this)">Servicios</button>
+  </div>
+  <div class="card">
+    <div class="st"><i class="ti ti-chart-line"></i><span id="cs-sub">Curva S general del proyecto</span></div>
+    <div style="display:flex;gap:1rem;margin-bottom:.75rem">
+      <span style="display:flex;align-items:center;gap:5px;font-size:11px"><div style="width:20px;height:2px;background:var(--epm)"></div>Planificado</span>
+      <span style="display:flex;align-items:center;gap:5px;font-size:11px"><div style="width:20px;height:0;border-top:2px dashed #D85A30"></div>Real</span>
+    </div>
+    <div class="chart-280"><canvas id="cvChart" role="img" aria-label="Curva S"></canvas></div>
+    <div class="g3" style="margin-top:.85rem">
+      <div style="text-align:center"><div style="font-size:11px;color:var(--tm);font-weight:600">Planificado</div><div style="font-size:19px;font-weight:700;color:var(--epm)" id="cv-p">4%</div></div>
+      <div style="text-align:center"><div style="font-size:11px;color:var(--tm);font-weight:600">Real</div><div style="font-size:19px;font-weight:700;color:#D85A30" id="cv-r">0%</div></div>
+      <div style="text-align:center"><div style="font-size:11px;color:var(--tm);font-weight:600">Desviación</div><div style="font-size:19px;font-weight:700;color:#639922" id="cv-d">0%</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ KPIs ═══ -->
+<div class="page" id="page-kpi">
+  <div class="ph"><div class="ph-t">Indicadores KPI — CW387385</div><span class="ph-m" id="kpi-sem-lbl">Semana 1 · Jul 2026</span></div>
+  <div class="alert ai"><i class="ti ti-info-circle" style="flex-shrink:0"></i><span id="kpi-alert-txt">Proyecto en inicio. KPIs se actualizan automáticamente con cada corte EVM registrado.</span></div>
+  <div class="kgrid" style="grid-template-columns:repeat(auto-fit,minmax(145px,1fr))">
+    <div class="kcard"><div class="kl">SPI</div><div class="kv dok" id="kpi-spi">1.00</div><div class="kd dok">Umbral ≥ 0.95</div></div>
+    <div class="kcard"><div class="kl">CPI</div><div class="kv dok" id="kpi-cpi">1.00</div><div class="kd dok">Umbral ≥ 0.95</div></div>
+    <div class="kcard"><div class="kl">Avance real</div><div class="kv depm" id="kpi-real">4%</div><div class="kd">Plan: 4%</div></div>
+    <div class="kcard"><div class="kl">EAC</div><div class="kv depm" id="kpi-eac">$867.2M</div><div class="kd" style="color:var(--tm)">BAC: $867.2M</div></div>
+    <div class="kcard"><div class="kl">Hitos cumplidos</div><div class="kv" id="kpi-hitos">1/13</div><div class="kd dok">Confirmación OC</div></div>
+    <div class="kcard"><div class="kl">Incidentes SST</div><div class="kv dok">0</div><div class="kd dok">Meta: 0</div></div>
+    <div class="kcard"><div class="kl">Cortes EVM</div><div class="kv" id="kpi-cortes">1</div><div class="kd" style="color:var(--tm)">de 26 semanas</div></div>
+  </div>
+  <div class="g2">
+    <div class="card">
+      <div class="st"><i class="ti ti-table"></i>KPI por tipo de suministro</div>
+      <table class="dtable">
+        <thead><tr><th>Tipo</th><th>Valor</th><th>% BAC</th><th>Estado</th></tr></thead>
+        <tbody>
+          <tr><td style="font-weight:600">Bienes + IVA</td><td>$571.1M</td><td>66%</td><td><span class="pill pok">OK</span></td></tr>
+          <tr><td style="font-weight:600">Obra Civil</td><td>$314.3M</td><td>36%</td><td><span class="pill pok">OK</span></td></tr>
+          <tr><td style="font-weight:600">Consultoría</td><td>$46.4M</td><td>5%</td><td><span class="pill pok">OK</span></td></tr>
+          <tr><td style="font-weight:600">Ambiental</td><td>$34.0M</td><td>4%</td><td><span class="pill pok">OK</span></td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="card">
+      <div class="st"><i class="ti ti-flag"></i>Hitos contractuales</div>
+      <table class="dtable">
+        <thead><tr><th>Hito</th><th>Fecha</th><th>Estado</th></tr></thead>
+        <tbody>
+          <tr><td>Confirmación OC</td><td>06/Jul/26</td><td><span class="pill pok">Cumplido</span></td></tr>
+          <tr><td>Anticipo 20% bienes</td><td>08/Jul/26</td><td><span class="pill pwarn">Próximo</span></td></tr>
+          <tr><td>Aprobación ing. redes</td><td>14/Oct/26</td><td><span class="pill pgray">Pendiente</span></td></tr>
+          <tr><td>FAT Tableros BT</td><td>09/Oct/26</td><td><span class="pill pgray">Pendiente</span></td></tr>
+          <tr><td>FAT Celdas Premset</td><td>10/Dic/26</td><td><span class="pill pgray">Pendiente</span></td></tr>
+          <tr><td>Entrega suministros</td><td>11/Dic/26</td><td><span class="pill pgray">Pendiente</span></td></tr>
+          <tr><td>Puesta en servicio</td><td>18/Dic/26</td><td><span class="pill pgray">Pendiente</span></td></tr>
+          <tr><td>Entrega Dossier</td><td>31/Dic/26</td><td><span class="pill pgray">Pendiente</span></td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ ACTIVIDADES ═══ -->
+<div class="page" id="page-actividades">
+  <div class="ph">
+    <div class="ph-t">Actividades del cronograma — V1 (83 actividades)</div>
+    <select id="flt-fase" style="padding:5px 9px;font-size:11px;border:1px solid var(--bds);border-radius:var(--r);background:var(--s2)" onchange="renderActs()">
+      <option value="">Todas las fases</option>
+      <option value="NEGOCIACION">Negociación</option>
+      <option value="DISEÑO">Diseño e Ingeniería</option>
+      <option value="COMPRAS">Compras</option>
+      <option value="PRODUCCION">Producción</option>
+      <option value="CIVIL">Construcción Civil</option>
+      <option value="MONTAJE">Montaje Eléctrico</option>
+      <option value="CALIDAD">Pruebas de Calidad</option>
+    </select>
+  </div>
+  <div class="card" style="padding:.4rem">
+    <table class="dtable">
+      <thead><tr><th>EDT</th><th>Actividad</th><th>Fase</th><th>Inicio</th><th>Fin</th><th>Dur.</th><th>Avance</th><th>Estado</th></tr></thead>
+      <tbody id="act-body"></tbody>
+    </table>
+  </div>
+</div>
+
+<!-- ═══ RUTA CRÍTICA ═══ -->
+<div class="page" id="page-ruta">
+  <div class="ph"><div class="ph-t">Ruta crítica — CW387385</div><span class="ph-m">129 días hábiles · Holgura 0</span></div>
+  <div class="alert ab2"><i class="ti ti-flame" style="flex-shrink:0"></i><span>Cualquier retraso en las actividades críticas impacta directamente el cierre del <strong>31/Dic/2026</strong>.</span></div>
+  <div class="card"><div class="st"><i class="ti ti-route"></i>Actividades críticas (holgura = 0)</div><div id="cp-list"></div></div>
+  <div class="card">
+    <div class="st"><i class="ti ti-git-branch"></i>Diagrama de red — Ruta crítica</div>
+    <div style="overflow-x:auto;padding:.5rem 0">
+      <div style="display:flex;align-items:center;min-width:700px">
+        <div style="padding:.4rem;flex-shrink:0"><div style="background:var(--epm-l);border:1.5px solid var(--epm);border-radius:7px;padding:.4rem .7rem;font-size:10px;font-weight:700;color:var(--epm-d);text-align:center">INICIO<br>06-Jul</div></div>
+        <div style="flex:1;height:2px;background:var(--epm)"></div>
+        <div style="padding:.4rem;flex-shrink:0;text-align:center"><div style="background:var(--epm-l);border:1.5px solid var(--epm);border-radius:7px;padding:.4rem .7rem;font-size:10px;font-weight:700;color:var(--epm-d)">Diseño<br>09-Jul→14-Oct</div></div>
+        <div style="flex:1;height:2px;background:var(--epm)"></div>
+        <div style="padding:.4rem;flex-shrink:0;text-align:center"><div style="background:var(--wnl);border:1.5px solid #EF9F27;border-radius:7px;padding:.4rem .7rem;font-size:10px;font-weight:700;color:var(--wn)">Aprobación<br>redes EPM<br>14 días</div></div>
+        <div style="flex:1;height:2px;background:var(--epm)"></div>
+        <div style="padding:.4rem;flex-shrink:0;text-align:center"><div style="background:var(--badl);border:2px solid #D85A30;border-radius:7px;padding:.4rem .7rem;font-size:10px;font-weight:700;color:var(--bad)">Producción<br>Premset<br>44 días</div></div>
+        <div style="flex:1;height:2px;background:var(--epm)"></div>
+        <div style="padding:.4rem;flex-shrink:0;text-align:center"><div style="background:var(--badl);border:2px solid #D85A30;border-radius:7px;padding:.4rem .7rem;font-size:10px;font-weight:700;color:var(--bad)">FAT +<br>Montaje</div></div>
+        <div style="flex:1;height:2px;background:var(--epm)"></div>
+        <div style="padding:.4rem;flex-shrink:0"><div style="background:var(--epm-l);border:1.5px solid var(--epm);border-radius:7px;padding:.4rem .7rem;font-size:10px;font-weight:700;color:var(--epm-d);text-align:center">DOSSIER<br>31-Dic</div></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ CANTIDADES ═══ -->
+<div class="page" id="page-cantidades">
+  <div class="ph">
+    <div class="ph-t">Control de cantidades</div>
+    <select id="flt-tipo" style="padding:5px 9px;font-size:11px;border:1px solid var(--bds);border-radius:var(--r);background:var(--s2)" onchange="renderItems()">
+      <option value="">Todos los tipos</option>
+      <option value="Bienes">Bienes</option>
+      <option value="Obra civil">Obra Civil</option>
+      <option value="Consultoría">Consultoría</option>
+      <option value="Ambiental">Ambiental</option>
+    </select>
+  </div>
+  <div class="card" style="padding:.4rem">
+    <table class="dtable">
+      <thead><tr><th>Ítem</th><th>Descripción</th><th>Tipo</th><th>Unidad</th><th>Cant.</th><th>Eje.</th><th>%</th><th>V. unitario</th><th>V. ejecutado</th></tr></thead>
+      <tbody id="items-body"></tbody>
+    </table>
+  </div>
+  <div class="card">
+    <div class="g3">
+      <div><div class="kl">Costo ejecutado</div><div style="font-size:18px;font-weight:700" id="cant-tot">$0</div></div>
+      <div><div class="kl">Ítems con ejecución</div><div style="font-size:18px;font-weight:700" id="cant-cnt">0</div></div>
+      <div><div class="kl">Avance promedio</div><div style="font-size:18px;font-weight:700" id="cant-avg">0%</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ EVM MULTICURVA ═══ -->
+<div class="page" id="page-evm">
+  <div class="ph">
+    <div class="ph-t">
+      <i class="ti ti-chart-dots-3" style="font-size:17px;color:var(--epm)"></i>EVM Multicurva — CW387385
+      <span class="vbadge vb-act" style="font-size:10px"><i class="ti ti-git-branch" style="font-size:10px"></i><span id="evm-ver-lbl">V1 · 23/Jun/2026</span></span>
+    </div>
+    <div style="display:flex;align-items:center;gap:8px">
+      <div class="ph-m"><i class="ti ti-calendar" style="font-size:10px"></i><span id="evm-hdr-sem">Sem 1 · 06/Jul/2026</span></div>
+      <button class="btsm" style="font-size:11px" onclick="toggleEvmPanel('panel-corte')"><i class="ti ti-plus" style="font-size:11px"></i>Registrar corte</button>
+      <button class="btsm" style="font-size:11px" onclick="exportEVM()"><i class="ti ti-download" style="font-size:11px"></i>Exportar CSV</button>
+    </div>
+  </div>
+  <div class="alert ai" id="evm-alerta"><i class="ti ti-info-circle" style="flex-shrink:0;margin-top:1px"></i><span id="evm-alerta-txt">Cronograma <strong>V1 cargado</strong>. Línea base PV activa desde 23/Jun/2026. Sem 1 registrada: <strong>EV $34.7M · 4% · SPI 1.00 · CPI 1.00</strong>. Registra cortes semanales para actualizar la curva real.</span></div>
+  <!-- KPI 7 -->
+  <div class="kgrid7">
+    <div class="kcard b-ok"><div class="kl"><i class="ti ti-clock" style="font-size:10px"></i> SPI</div><div class="kv dok" id="evm-spi">1.00</div><div class="kd"><span class="pill pok" id="evm-spi-pill">En línea</span></div><div class="kd" style="color:var(--tm);margin-top:3px;font-size:10px">Umbral ≥ 0.95</div></div>
+    <div class="kcard b-ok"><div class="kl"><i class="ti ti-coin" style="font-size:10px"></i> CPI</div><div class="kv dok" id="evm-cpi">1.00</div><div class="kd"><span class="pill pok" id="evm-cpi-pill">En costo</span></div><div class="kd" style="color:var(--tm);margin-top:3px;font-size:10px">Umbral ≥ 0.95</div></div>
+    <div class="kcard b-ok"><div class="kl">SV ($M)</div><div class="kv dok" id="evm-sv">$0.0M</div><div class="kd dok" id="evm-sv-lbl">Varianza plazo</div></div>
+    <div class="kcard b-ok"><div class="kl">CV ($M)</div><div class="kv dok" id="evm-cv">$0.0M</div><div class="kd dok" id="evm-cv-lbl">Varianza costo</div></div>
+    <div class="kcard b-epm"><div class="kl">EAC ($M)</div><div class="kv depm" id="evm-eac">$867.2M</div><div class="kd" style="color:var(--tm)" id="evm-eac-delta">BAC: $867.2M · Δ 0.0%</div></div>
+    <div class="kcard b-epm"><div class="kl">ETC ($M)</div><div class="kv" id="evm-etc">$832.5M</div><div class="kd" style="color:var(--tm)">Por ejecutar</div></div>
+    <div class="kcard b-ok"><div class="kl">TCPI</div><div class="kv dok" id="evm-tcpi">1.00</div><div class="kd"><span class="pill pgray" id="evm-tcpi-pill">Eficiencia req.</span></div></div>
+  </div>
+  <!-- EVM Chart -->
+  <div class="card">
+    <div class="st"><i class="ti ti-chart-dots-3"></i>Curva S — PV · EV · AC · EAC pronóstico</div>
+    <div class="legend">
+      <div class="leg"><div class="ll" style="background:#005baa"></div>PV — Valor Planificado (V1)</div>
+      <div class="leg"><div class="ll" style="background:#3B6D11"></div>EV — Valor Ganado</div>
+      <div class="leg"><div class="ll" style="background:#854F0B"></div>AC — Costo Real</div>
+      <div class="leg"><div class="ld" style="border-top-color:#A32D2D"></div>EAC — Pronóstico</div>
+      <div class="leg"><div class="ld" style="border-top-color:#898781"></div>BAC $867.2M</div>
+    </div>
+    <div class="evm-strip">
+      <div class="evm-chip"><strong id="chip-sem">S1</strong></div>
+      <div class="evm-chip">PV <strong id="chip-pv" style="color:var(--epm)">$34.7M</strong></div>
+      <div class="evm-chip">EV <strong id="chip-ev" style="color:var(--ok)">$34.7M</strong></div>
+      <div class="evm-chip">AC <strong id="chip-ac" style="color:#854F0B">$34.7M</strong></div>
+      <div class="evm-chip">EAC <strong id="chip-eac" style="color:var(--bad)">$867.2M</strong></div>
+      <div class="evm-chip">Avance <strong id="chip-pct" style="color:var(--ok)">4.0%</strong></div>
+    </div>
+    <div class="chart-360"><canvas id="evmChart"></canvas></div>
+  </div>
+  <!-- Indices + Varianzas -->
+  <div class="g2">
+    <div class="card">
+      <div class="st"><i class="ti ti-trending-up"></i>SPI & CPI por semana</div>
+      <div class="legend"><div class="leg"><div class="ll" style="background:#005baa"></div>SPI</div><div class="leg"><div class="ll" style="background:#3B6D11"></div>CPI</div><div class="leg"><div class="ld" style="border-top-color:#898781"></div>Umbral 1.0</div></div>
+      <div class="chart-210"><canvas id="indiceChart"></canvas></div>
+    </div>
+    <div class="card">
+      <div class="st"><i class="ti ti-arrows-diff"></i>Varianzas SV & CV ($M)</div>
+      <div class="legend"><div class="leg"><div class="ll" style="background:#005baa"></div>SV ($M)</div><div class="leg"><div class="ll" style="background:#3B6D11"></div>CV ($M)</div></div>
+      <div class="chart-210"><canvas id="varChart"></canvas></div>
+    </div>
+  </div>
+  <!-- Panel registro corte -->
+  <div class="card" id="panel-corte" style="display:none;border:1.5px solid var(--epm-l)">
+    <div class="st"><i class="ti ti-pencil-plus"></i>Registrar corte semanal</div>
+    <div class="alert ai" style="font-size:11px"><i class="ti ti-info-circle" style="flex-shrink:0"></i><span>EV = <strong>% avance real × $867.2M</strong> (automático). Ingresa el AC real acumulado. También puedes cargar un cronograma desde el módulo "Cargar cronograma" y los datos se sincronizarán.</span></div>
+    <div class="frow5">
+      <div class="fg"><label>Semana</label><select id="c-sem"><option value="">Seleccionar...</option></select></div>
+      <div class="fg"><label>% Avance real</label><input type="number" id="c-pct" min="0" max="100" step="0.1" placeholder="0.0" oninput="autoCalcEV()"></div>
+      <div class="fg"><label>EV auto ($M)</label><input type="text" id="c-ev-disp" readonly placeholder="Auto" style="background:var(--s0);color:var(--ok);font-weight:600"></div>
+      <div class="fg"><label>AC — Costo real ($M)</label><input type="number" id="c-ac" min="0" step="0.1" placeholder="0.0"></div>
+      <div class="fg"><label>Versión</label><select id="c-ver"><option value="V1">V1 Baseline</option></select></div>
+    </div>
+    <div class="fg" style="margin-bottom:.75rem"><label>Observaciones</label><input type="text" id="c-obs" placeholder="Ej: Aprobación redes pendiente — impacta ruta crítica…"></div>
+    <div style="display:flex;gap:8px;align-items:center">
+      <button class="btsv" onclick="registrarCorte()"><i class="ti ti-device-floppy"></i>Guardar corte</button>
+      <button class="btsm" onclick="toggleEvmPanel('panel-corte')">Cancelar</button>
+      <span id="corte-msg" style="font-size:12px;font-weight:600;margin-left:4px"></span>
+    </div>
+  </div>
+  <!-- Tabla cortes -->
+  <div class="card">
+    <div class="st"><i class="ti ti-table"></i>Historial de cortes EVM</div>
+    <div style="overflow-x:auto"><table class="dtable"><thead><tr><th>Sem</th><th>Fecha</th><th>%</th><th>PV</th><th>EV</th><th>AC</th><th>SPI</th><th>CPI</th><th>SV</th><th>CV</th><th>EAC</th><th>Observaciones</th><th>Ver.</th><th></th></tr></thead><tbody id="body-cortes"></tbody></table></div>
+  </div>
+  <!-- Fases -->
+  <div class="card">
+    <div class="st"><i class="ti ti-layers-intersect"></i>Desempeño por fase — V1 (83 actividades · 129 días)</div>
+    <div style="overflow-x:auto"><table class="dtable"><thead><tr><th>Fase</th><th>Semanas</th><th>Inicio</th><th>Fin</th><th>Acts.</th><th>Budget</th><th>% BAC</th><th>PV ejec.</th><th>Estado</th></tr></thead><tbody id="body-fases"></tbody></table></div>
+  </div>
+  <!-- Versiones -->
+  <div class="card">
+    <div class="st"><i class="ti ti-git-branch"></i>Control de versiones del cronograma</div>
+    <table class="dtable"><thead><tr><th>Versión</th><th>Fecha carga</th><th>Archivo</th><th>Actividades</th><th>Duración</th><th>Estado</th></tr></thead><tbody id="body-versiones"></tbody></table>
+    <div class="alert ai" style="margin-top:.75rem;margin-bottom:0;font-size:11px"><i class="ti ti-info-circle" style="flex-shrink:0"></i><span>Cuando el contratista entregue una actualización, cárgala desde <strong>Cargar cronograma</strong>. Se generará V2 y se calcularán las variaciones vs V1 automáticamente. La PV solo cambia con rebaseline aprobado por EPM.</span></div>
+  </div>
+  <!-- Referencia EVM -->
+  <div class="card" style="background:linear-gradient(135deg,var(--epm-l) 0%,var(--s2) 60%)">
+    <div class="st"><i class="ti ti-book-2"></i>Referencia rápida EVM — PMBOK 8th ed.</div>
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:8px;font-size:11px">
+      <div style="background:var(--s2);border-radius:var(--r);padding:.55rem .75rem;border:.5px solid var(--bd)"><strong style="color:var(--epm)">PV</strong> Valor planificado acumulado (línea base)</div>
+      <div style="background:var(--s2);border-radius:var(--r);padding:.55rem .75rem;border:.5px solid var(--bd)"><strong style="color:var(--ok)">EV</strong> % avance real × BAC ($867.2M)</div>
+      <div style="background:var(--s2);border-radius:var(--r);padding:.55rem .75rem;border:.5px solid var(--bd)"><strong style="color:#854F0B">AC</strong> Costo real acumulado ejecutado</div>
+      <div style="background:var(--s2);border-radius:var(--r);padding:.55rem .75rem;border:.5px solid var(--bd)"><strong style="color:var(--epm)">SPI</strong> = EV/PV · ≥1.05 adelantado · ≥0.95 en línea</div>
+      <div style="background:var(--s2);border-radius:var(--r);padding:.55rem .75rem;border:.5px solid var(--bd)"><strong style="color:var(--epm)">CPI</strong> = EV/AC · ≥1.05 bajo costo · &lt;0.95 sobre costo</div>
+      <div style="background:var(--s2);border-radius:var(--r);padding:.55rem .75rem;border:.5px solid var(--bd)"><strong style="color:var(--epm)">EAC</strong> = BAC/CPI · Estimado al cierre</div>
+      <div style="background:var(--s2);border-radius:var(--r);padding:.55rem .75rem;border:.5px solid var(--bd)"><strong style="color:var(--epm)">ETC</strong> = EAC−AC · Costo restante estimado</div>
+      <div style="background:var(--s2);border-radius:var(--r);padding:.55rem .75rem;border:.5px solid var(--bd)"><strong style="color:var(--epm)">TCPI</strong> = (BAC−EV)/(EAC−AC) · Eficiencia requerida</div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ CARGAR CRONOGRAMA ═══ -->
+<div class="page" id="page-cronograma">
+  <div class="ph"><div class="ph-t">Cargar cronograma semanal</div><span class="ph-m">CW387385 · 26 semanas</span></div>
+  <div class="alert ai"><i class="ti ti-info-circle" style="flex-shrink:0"></i><span>Sube el archivo del cronograma cada semana. El avance registrado aquí <strong>sincroniza automáticamente</strong> el EV en la página EVM Multicurva. Puedes ajustar el AC en EVM manualmente.</span></div>
+  <div class="card">
+    <div class="st"><i class="ti ti-file-upload"></i>Subir archivo del cronograma</div>
+    <div class="frow">
+      <div class="fg"><label>Semana de corte</label><select id="cron-sem" style="padding:8px 10px;border:1px solid var(--bds);border-radius:var(--r);font-size:13px;background:var(--s2)"><option value="">Seleccionar semana...</option></select></div>
+      <div class="fg"><label>Avance real (%)</label><input type="number" id="cron-avance" min="0" max="100" placeholder="0" style="padding:8px 10px;border:1px solid var(--bds);border-radius:var(--r);font-size:13px"></div>
+    </div>
+    <div class="fg" style="margin-bottom:.85rem"><label>Observaciones del corte</label><input type="text" id="cron-obs" placeholder="Ej: Retraso en aprobación de planos por EPM..." style="padding:8px 10px;border:1px solid var(--bds);border-radius:var(--r);font-size:13px"></div>
+    <div class="drop-zone" id="drop-zone" onclick="document.getElementById('file-input').click()" ondragover="event.preventDefault();this.classList.add('dragover')" ondragleave="this.classList.remove('dragover')" ondrop="handleDrop(event)">
+      <i class="ti ti-cloud-upload" style="font-size:40px;color:var(--tm);display:block;margin-bottom:.5rem"></i>
+      <div style="font-size:14px;font-weight:600;color:var(--ts);margin-bottom:.25rem">Arrastra el archivo aquí o haz clic para seleccionar</div>
+      <div style="font-size:12px;color:var(--tm)">Formatos: .xlsx · .xls · .pdf · .mpp · Máx 20MB</div>
+      <input type="file" id="file-input" accept=".xlsx,.xls,.pdf,.mpp,.xml" style="display:none" onchange="handleFileSelect(this)">
+    </div>
+    <div id="file-preview" style="display:none;background:var(--s0);border:1px solid #B5D4F4;border-radius:var(--r);padding:.85rem 1rem;margin-bottom:.85rem">
+      <div style="display:flex;align-items:center;gap:12px">
+        <i class="ti ti-file-spreadsheet" id="file-icon" style="font-size:32px;color:var(--epm)"></i>
+        <div style="flex:1"><div style="font-size:13px;font-weight:600" id="file-name">—</div><div style="font-size:11px;color:var(--tm)" id="file-meta">—</div></div>
+        <button onclick="clearFile()" style="padding:5px 10px;border:1px solid var(--badb);border-radius:var(--r);background:transparent;cursor:pointer;color:var(--bad);font-size:12px"><i class="ti ti-x" style="font-size:12px"></i> Quitar</button>
+      </div>
+    </div>
+    <button class="btn-upload" onclick="subirCronograma()"><i class="ti ti-upload"></i> Cargar cronograma y sincronizar EVM</button>
+    <div id="upload-ok" style="display:none;margin-top:.75rem" class="alert ao"><i class="ti ti-circle-check"></i><span id="upload-ok-msg">Cargado exitosamente</span></div>
+    <div id="upload-err" style="display:none;margin-top:.75rem" class="alert ab2"><i class="ti ti-alert-circle"></i><span id="upload-err-msg">Error</span></div>
+  </div>
+  <div class="card">
+    <div class="st"><i class="ti ti-history"></i>Historial de cronogramas cargados</div>
+    <table class="dtable"><thead><tr><th>Semana</th><th>Archivo</th><th>Avance real</th><th>EV auto ($M)</th><th>Observaciones</th><th>Cargado por</th><th>Fecha</th><th></th></tr></thead><tbody id="cron-hist-body"><tr><td colspan="8" style="text-align:center;color:var(--tm);padding:1.5rem;font-size:12px">No hay cronogramas cargados aún</td></tr></tbody></table>
+  </div>
+</div>
+
+<!-- ═══ USUARIOS ═══ -->
+<div class="page" id="page-usuarios">
+  <div class="ph"><div class="ph-t">Gestión de usuarios</div><button class="btsv" onclick="toggleUF()"><i class="ti ti-user-plus"></i> Nuevo usuario</button></div>
+  <div class="alert ai"><i class="ti ti-info-circle"></i>Solo se admiten correos <strong>@epm.com.co</strong>.</div>
+  <div class="card hidden" id="user-form">
+    <div class="frow"><div class="fg"><label>Nombre completo</label><input type="text" id="uf-name" placeholder="Nombre"></div><div class="fg"><label>Usuario</label><div style="display:flex"><input type="text" id="uf-usr" placeholder="nombre.apellido" style="border-radius:var(--r) 0 0 var(--r);flex:1"><span style="padding:7px 8px;background:var(--s1);border:1px solid var(--bds);border-left:none;border-radius:0 var(--r) var(--r) 0;font-size:11px;color:var(--epm);white-space:nowrap">@epm.com.co</span></div></div></div>
+    <div class="frow"><div class="fg"><label>Contraseña</label><input type="password" id="uf-pass" placeholder="Mín. 8 caracteres"></div><div class="fg"><label>Rol</label><select id="uf-rol"><option value="colaborador">Colaborador</option><option value="admin">Administrador</option></select></div></div>
+    <div class="frow" style="margin-bottom:.75rem"><div class="fg"><label>Cargo</label><input type="text" id="uf-cargo" placeholder="Cargo"></div><div class="fg"><label>Especialidad</label><select id="uf-esp"><option>Eléctrica</option><option>Civil</option><option>Instrumentación</option><option>Gerencia</option></select></div></div>
+    <div id="uf-err" class="alert ab2 hidden"><i class="ti ti-alert-circle"></i><span id="uf-err-msg"></span></div>
+    <div style="display:flex;gap:8px"><button class="btsv" onclick="saveUser()"><i class="ti ti-device-floppy"></i> Crear</button><button class="btsm" onclick="toggleUF()">Cancelar</button></div>
+  </div>
+  <div class="card" id="ulist-box"></div>
+</div>
+
+</div></div>
+<!-- ═══ BOTTOM NAV (móvil) ═══ -->
+<nav class="bottom-nav" id="bottomNav">
+  <div class="bnav-item active" data-page="dashboard" onclick="sp('dashboard')"><i class="ti ti-layout-dashboard" aria-hidden="true"></i><span>Inicio</span></div>
+  <div class="bnav-item" data-page="evm" onclick="sp('evm')"><i class="ti ti-chart-dots-3" aria-hidden="true"></i><span>EVM</span></div>
+  <div class="bnav-item" data-page="cronograma" onclick="sp('cronograma')"><i class="ti ti-file-upload" aria-hidden="true"></i><span>Cargar</span></div>
+  <div class="bnav-item" data-page="kpi" onclick="sp('kpi')"><i class="ti ti-target" aria-hidden="true"></i><span>KPIs</span></div>
+  <div class="bnav-item" onclick="toggleSidebar()"><i class="ti ti-menu-2" aria-hidden="true"></i><span>Más</span></div>
+</nav>
+</div>
+<script>
+// ═══════════════════════════════════════════════════
+//  DATOS ORIGINALES
+// ═══════════════════════════════════════════════════
+const ITEMS=[
+  {id:'2.1.2.6',desc:'Condensador 525V 3F 48KVAR — Factor de Potencia',tipo:'Bienes',unidad:'und',cant:1,vu:34898059,eje:0},
+  {id:'2.1.1.47',desc:'Implementación medidas manejo ambiental',tipo:'Ambiental',unidad:'glb',cant:1,vu:7058824,eje:0},
+  {id:'2.1.1.44',desc:'Sum/Tra/Ins protección equipos desmontaje',tipo:'Obra civil',unidad:'und',cant:2,vu:48000,eje:0},
+  {id:'2.1.1.8',desc:'Inst. vestida 13.2KV cubierta abierta terminal',tipo:'Obra civil',unidad:'und',cant:2,vu:2740147,eje:0},
+  {id:'2.1.1.7',desc:'Trans/Inst puentes tensión II y III',tipo:'Obra civil',unidad:'und',cant:2,vu:951004,eje:0},
+  {id:'2.1.1.36',desc:'Sum/Inst bandeja escalera galv. 10x8cm',tipo:'Obra civil',unidad:'ml',cant:5,vu:259283,eje:0},
+  {id:'2.1.1.22',desc:'Sum/Tra/Ins cable fuerza 3x18AWG LSZH 600V',tipo:'Obra civil',unidad:'ml',cant:80,vu:14358,eje:0},
+  {id:'2.1.1.6',desc:'Retiro desconectador cuchilla 13.2KV LV',tipo:'Obra civil',unidad:'und',cant:2,vu:4149497,eje:0},
+  {id:'2.1.1.40',desc:'Sum/Tra/Ins tubería conduit PVC DB 6"',tipo:'Obra civil',unidad:'ml',cant:12,vu:116566,eje:0},
+  {id:'2.1.1.5',desc:'Inst. breaker estructura/tablero NT I',tipo:'Obra civil',unidad:'und',cant:2,vu:236430,eje:0},
+  {id:'2.1.1.12',desc:'Inst. vestida sistema medición RA8-028 trifásico',tipo:'Obra civil',unidad:'und',cant:1,vu:45383430,eje:0},
+  {id:'2.1.2.2',desc:'Celda seccionador 17.5KV 25KA (Premset)',tipo:'Bienes',unidad:'und',cant:1,vu:95465562,eje:0},
+  {id:'2.1.1.1',desc:'Trans/Desc/Inst celda MT tipo AIS',tipo:'Obra civil',unidad:'und',cant:2,vu:4047843,eje:0},
+  {id:'2.1.1.2',desc:'Ubic/Mont/Ancl celda potencia <13.2KV',tipo:'Obra civil',unidad:'und',cant:1,vu:3379608,eje:0},
+  {id:'2.1.1.37',desc:'Montaje sistema eléctrico provisional bombeo',tipo:'Obra civil',unidad:'glb',cant:1,vu:22951766,eje:0},
+  {id:'2.1.1.13',desc:'Trans/Inst acometida XLPE 1/0AWG 15KV',tipo:'Obra civil',unidad:'ml',cant:60,vu:445862,eje:0},
+  {id:'2.1.3.2',desc:'Diseño lista/mapa registros PLC',tipo:'Consultoría y Servicios',unidad:'glb',cant:1,vu:2127273,eje:0},
+  {id:'2.1.3.1',desc:'Desarrollo programa PLC y lógica de control',tipo:'Consultoría y Servicios',unidad:'glb',cant:1,vu:2127273,eje:0},
+  {id:'2.1.3.4',desc:'Elaboración de planos As-Built',tipo:'Consultoría y Servicios',unidad:'glb',cant:1,vu:7890909,eje:0},
+  {id:'2.1.3.3',desc:'Diseños eléctricos malla tierra y apantallamiento',tipo:'Consultoría y Servicios',unidad:'glb',cant:1,vu:26854545,eje:0},
+  {id:'2.1.2.3',desc:'PLC para tablero de control',tipo:'Bienes',unidad:'und',cant:1,vu:13729778,eje:0},
+  {id:'2.1.2.1',desc:'Celda interruptor 13.2KV 630A 25KA Premset (x2)',tipo:'Bienes',unidad:'und',cant:2,vu:148070766,eje:0},
+  {id:'2.1.2.5',desc:'Tablero servicios auxiliares 460/208-120VCA 630A',tipo:'Bienes',unidad:'und',cant:1,vu:23137703,eje:0},
+  {id:'2.1.2.4',desc:'Switch capa 2 — 8P RJ45 + 2P fibra 1000LX',tipo:'Bienes',unidad:'und',cant:1,vu:15506667,eje:0},
+  {id:'2.1.2.7',desc:'Interruptor termomagn. CM 3x100A 25KA 600V',tipo:'Bienes',unidad:'und',cant:2,vu:515706,eje:0},
+  {id:'2.1.1.35',desc:'Sum/Tra/Ins bandeja escalera 20cm galv.',tipo:'Obra civil',unidad:'ml',cant:71,vu:265144,eje:0},
+  {id:'2.1.1.41',desc:'Construcción caja RS3-005',tipo:'Obra civil',unidad:'und',cant:2,vu:5006707,eje:0},
+  {id:'2.1.1.11',desc:'Sum/Tra/Col poste concreto 14m 750kg',tipo:'Obra civil',unidad:'und',cant:1,vu:6967638,eje:0},
+  {id:'2.1.1.46',desc:'Implementación programas manejo socioambiental',tipo:'Ambiental',unidad:'glb',cant:1,vu:7058824,eje:0},
+  {id:'2.1.1.48',desc:'Implementación programas sociales complementarios',tipo:'Ambiental',unidad:'glb',cant:1,vu:3537716,eje:0},
+  {id:'2.1.1.49',desc:'Medición de ruido ambiental',tipo:'Ambiental',unidad:'glb',cant:1,vu:4363183,eje:0},
+];
+const ACTS=[
+  {edt:'1.1.1',name:'Confirmación OC',fase:'NEGOCIACION',inicio:'06/Jul',fin:'06/Jul',dur:'0.5d',prog:100,estado:'ok'},
+  {edt:'1.1.2',name:'Acta lanzamiento interna (FR-081)',fase:'NEGOCIACION',inicio:'06/Jul',fin:'06/Jul',dur:'0.5d',prog:80,estado:'prog'},
+  {edt:'1.1.3',name:'Acta lanzamiento externa con EPM',fase:'NEGOCIACION',inicio:'07/Jul',fin:'07/Jul',dur:'1d',prog:0,estado:'prog'},
+  {edt:'1.1.4',name:'Entrega OC anticipo 20% bienes',fase:'NEGOCIACION',inicio:'08/Jul',fin:'08/Jul',dur:'1d',prog:0,estado:'pend'},
+  {edt:'1.1.5.1',name:'Elaboración planning general (FR-035AU)',fase:'DISEÑO',inicio:'09/Jul',fin:'09/Jul',dur:'1d',prog:0,estado:'pend'},
+  {edt:'1.1.5.2',name:'Memorias de cálculo',fase:'DISEÑO',inicio:'10/Jul',fin:'14/Jul',dur:'3d',prog:0,estado:'pend'},
+  {edt:'1.1.5.3',name:'Diseño de planos eléctricos',fase:'DISEÑO',inicio:'15/Jul',fin:'21/Jul',dur:'5d',prog:0,estado:'pend'},
+  {edt:'1.1.5.4.1',name:'Diseño y dimensionamiento mecánicos tableros',fase:'DISEÑO',inicio:'22/Jul',fin:'23/Jul',dur:'2d',prog:0,estado:'pend'},
+  {edt:'1.1.5.4.2',name:'Unifilar con equipos principales',fase:'DISEÑO',inicio:'24/Jul',fin:'27/Jul',dur:'2d',prog:0,estado:'pend'},
+  {edt:'1.1.5.5.1',name:'Solicitud punto de conexión',fase:'DISEÑO',inicio:'28/Jul',fin:'29/Jul',dur:'2d',prog:0,estado:'pend'},
+  {edt:'1.1.5.5.4',name:'Elaboración proyecto de redes',fase:'DISEÑO',inicio:'13/Ago',fin:'24/Ago',dur:'8d',prog:0,estado:'pend'},
+  {edt:'1.1.5.5.11',name:'⚠ Aprobación plano proyecto redes EPM',fase:'DISEÑO',inicio:'25/Sep',fin:'14/Oct',dur:'14d',prog:0,estado:'riesgo'},
+  {edt:'1.1.5.6.6',name:'Desarrollo ingeniería detallada Premset',fase:'DISEÑO',inicio:'03/Sep',fin:'30/Sep',dur:'20d',prog:0,estado:'pend'},
+  {edt:'1.1.5.6.8',name:'⚠ Aprobación ingeniería detallada EPM',fase:'DISEÑO',inicio:'02/Oct',fin:'07/Oct',dur:'4d',prog:0,estado:'riesgo'},
+  {edt:'1.1.6.1',name:'Compras y recibo materiales mayores',fase:'COMPRAS',inicio:'15/Oct',fin:'19/Oct',dur:'3d',prog:0,estado:'pend'},
+  {edt:'1.1.6.2',name:'Compras y recibo materiales menores',fase:'COMPRAS',inicio:'20/Oct',fin:'22/Oct',dur:'3d',prog:0,estado:'pend'},
+  {edt:'1.1.7.1',name:'Ensamble componentes mecánicos Premset',fase:'PRODUCCION',inicio:'08/Oct',fin:'19/Oct',dur:'8d',prog:0,estado:'pend'},
+  {edt:'1.1.7.2',name:'Ensamble equipos de potencia Premset',fase:'PRODUCCION',inicio:'20/Oct',fin:'02/Nov',dur:'10d',prog:0,estado:'pend'},
+  {edt:'1.1.7.3',name:'Ensamble elementos de control Premset',fase:'PRODUCCION',inicio:'03/Nov',fin:'02/Dic',dur:'22d',prog:0,estado:'pend'},
+  {edt:'1.1.7.4',name:'Verificación y corrección planos eléctricos',fase:'PRODUCCION',inicio:'03/Dic',fin:'08/Dic',dur:'4d',prog:0,estado:'pend'},
+  {edt:'1.1.9.1',name:'FAT tableros baja tensión',fase:'CALIDAD',inicio:'08/Oct',fin:'09/Oct',dur:'2d',prog:0,estado:'pend'},
+  {edt:'1.1.9.2',name:'⚠ FAT celdas PREMSET',fase:'CALIDAD',inicio:'09/Dic',fin:'10/Dic',dur:'2d',prog:0,estado:'riesgo'},
+  {edt:'1.1.10',name:'Entrega suministros en obra',fase:'CALIDAD',inicio:'11/Dic',fin:'11/Dic',dur:'1d',prog:0,estado:'pend'},
+  {edt:'1.1.11.1',name:'Montaje campamento',fase:'CIVIL',inicio:'26/Oct',fin:'27/Oct',dur:'2d',prog:0,estado:'pend'},
+  {edt:'1.1.11.2',name:'Construcción de canalizaciones',fase:'CIVIL',inicio:'28/Oct',fin:'03/Nov',dur:'5d',prog:0,estado:'pend'},
+  {edt:'1.1.11.3',name:'Construcción cajas RS3-005',fase:'CIVIL',inicio:'04/Nov',fin:'10/Nov',dur:'5d',prog:0,estado:'pend'},
+  {edt:'1.1.11.4',name:'Demoliciones',fase:'CIVIL',inicio:'11/Nov',fin:'13/Nov',dur:'3d',prog:0,estado:'pend'},
+  {edt:'1.1.11.5',name:'Construcción',fase:'CIVIL',inicio:'16/Nov',fin:'20/Nov',dur:'5d',prog:0,estado:'pend'},
+  {edt:'1.1.12.1',name:'Movimiento celdas e instalación provisional',fase:'MONTAJE',inicio:'23/Nov',fin:'24/Nov',dur:'2d',prog:0,estado:'pend'},
+  {edt:'1.1.12.2',name:'Instalación tableros baja tensión',fase:'MONTAJE',inicio:'25/Nov',fin:'26/Nov',dur:'2d',prog:0,estado:'pend'},
+  {edt:'1.1.12.3',name:'Instalación bandejas porta cables',fase:'MONTAJE',inicio:'27/Nov',fin:'30/Nov',dur:'2d',prog:0,estado:'pend'},
+  {edt:'1.1.12.7',name:'Montaje de celdas Premset',fase:'MONTAJE',inicio:'10/Dic',fin:'14/Dic',dur:'3d',prog:0,estado:'pend'},
+  {edt:'1.1.12.8',name:'⚠ Conexión línea viva',fase:'MONTAJE',inicio:'15/Dic',fin:'15/Dic',dur:'1d',prog:0,estado:'riesgo'},
+  {edt:'1.1.12.9',name:'Puesta en servicio',fase:'MONTAJE',inicio:'16/Dic',fin:'18/Dic',dur:'3d',prog:0,estado:'pend'},
+  {edt:'1.1.12.10',name:'Pruebas SAT',fase:'MONTAJE',inicio:'21/Dic',fin:'22/Dic',dur:'2d',prog:0,estado:'pend'},
+  {edt:'1.1.12.11',name:'Trámites de legalización',fase:'MONTAJE',inicio:'23/Dic',fin:'30/Dic',dur:'6d',prog:0,estado:'pend'},
+  {edt:'1.1.13',name:'⚠ Entrega Dossier del Proyecto',fase:'MONTAJE',inicio:'31/Dic',fin:'31/Dic',dur:'1d',prog:0,estado:'riesgo'},
+];
+const CP_ITEMS=[
+  {name:'Aprobación proyecto de redes EPM',dur:'14 días',status:'warn',nota:'Riesgo externo — depende de ciclos de revisión EPM'},
+  {name:'Producción ensamble Premset completo',dur:'44 días',status:'bad',nota:'Ruta más larga del proyecto — sin holgura'},
+  {name:'FAT celdas Premset (09-10/Dic)',dur:'2 días',status:'bad',nota:'Hito crítico antes del montaje en sitio'},
+  {name:'Montaje de celdas Premset',dur:'3 días',status:'bad',nota:'Requiere suministro entregado y sitio civil listo'},
+  {name:'Conexión línea viva (15/Dic)',dur:'1 día',status:'warn',nota:'Requiere coordinación con EPM para corte de energía'},
+  {name:'Entrega Dossier (31/Dic)',dur:'1 día',status:'warn',nota:'Hito contractual inamovible — fecha límite contrato'},
+];
+const SEMANAS=[
+  {n:1,label:'S1 — 06 al 11 Jul 2026'},{n:2,label:'S2 — 13 al 18 Jul 2026'},
+  {n:3,label:'S3 — 20 al 25 Jul 2026'},{n:4,label:'S4 — 27 Jul al 01 Ago 2026'},
+  {n:5,label:'S5 — 03 al 08 Ago 2026'},{n:6,label:'S6 — 10 al 15 Ago 2026'},
+  {n:7,label:'S7 — 17 al 22 Ago 2026'},{n:8,label:'S8 — 24 al 29 Ago 2026'},
+  {n:9,label:'S9 — 31 Ago al 05 Sep 2026'},{n:10,label:'S10 — 07 al 12 Sep 2026'},
+  {n:11,label:'S11 — 14 al 19 Sep 2026'},{n:12,label:'S12 — 21 al 26 Sep 2026'},
+  {n:13,label:'S13 — 28 Sep al 03 Oct 2026'},{n:14,label:'S14 — 05 al 10 Oct 2026'},
+  {n:15,label:'S15 — 12 al 17 Oct 2026'},{n:16,label:'S16 — 19 al 24 Oct 2026'},
+  {n:17,label:'S17 — 26 al 31 Oct 2026'},{n:18,label:'S18 — 02 al 07 Nov 2026'},
+  {n:19,label:'S19 — 09 al 14 Nov 2026'},{n:20,label:'S20 — 16 al 21 Nov 2026'},
+  {n:21,label:'S21 — 23 al 28 Nov 2026'},{n:22,label:'S22 — 30 Nov al 05 Dic 2026'},
+  {n:23,label:'S23 — 07 al 12 Dic 2026'},{n:24,label:'S24 — 14 al 19 Dic 2026'},
+  {n:25,label:'S25 — 21 al 26 Dic 2026'},{n:26,label:'S26 — 29 al 31 Dic 2026'},
+];
+const CVD={
+  gral:{plan:[0,4,6,8,11,13,15,17,20,24,28,33,39,46,53,60,68,76,83,88,92,95,97,98,99,99,100],real:[0,4],pv:4,ev:4,dev:0,sub:'Curva S general — CW387385'},
+  civil:{plan:[0,0,0,0,0,0,0,0,0,0,0,0,0,0,5,15,35,55,75,90,100,100,100,100,100,100,100],real:[0],pv:0,ev:0,dev:0,sub:'Curva S — Obra Civil ($314.3M)'},
+  bienes:{plan:[0,0,0,0,0,0,0,0,0,5,12,20,30,42,55,68,80,90,96,100,100,100,100,100,100,100,100],real:[0],pv:0,ev:0,dev:0,sub:'Curva S — Bienes ($571.1M)'},
+  serv:{plan:[0,4,10,20,35,50,62,72,80,86,91,94,96,98,100,100,100,100,100,100,100,100,100,100,100,100,100],real:[0],pv:4,ev:0,dev:-4,sub:'Curva S — Consultoría ($46.4M)'},
+};
+const CV_LBL=['Inicio','S1','S2','S3','S4','S5','S6','S7','S8','S9','S10','S11','S12','S13','S14','S15','S16','S17','S18','S19','S20','S21','S22','S23','S24','S25','S26'];
+let users=[
+  {id:1,usr:'Admin',pwd:'123',name:'Carolina Gomez B',rol:'admin',cargo:'Gerente de proyecto',esp:'Gerencia',email:'carolina.gomez@epm.com.co'},
+  {id:2,usr:'a.torres',pwd:'123',name:'Ana Torres',rol:'colaborador',cargo:'Ing. residente civil',esp:'Civil',email:'a.torres@epm.com.co'},
+  {id:3,usr:'l.perez',pwd:'123',name:'Luis Pérez',rol:'colaborador',cargo:'Ingeniero eléctrico',esp:'Eléctrica',email:'l.perez@epm.com.co'},
+  {id:4,usr:'m.garcia',pwd:'123',name:'María García',rol:'colaborador',cargo:'Ing. instrumentación',esp:'Instrumentación',email:'m.garcia@epm.com.co'},
+];
+let currentUser=users[0], cronHistorial=[], archivoSeleccionado=null, cvChart=null, costChart=null;
+
+// ═══════════════════════════════════════════════════
+//  EVM DATA
+// ═══════════════════════════════════════════════════
+const BAC=867.2, N_SEM=26;
+const INICIO_PROJ=new Date(2026,6,6);
+const MES_ES=['Ene','Feb','Mar','Abr','May','Jun','Jul','Ago','Sep','Oct','Nov','Dic'];
+function semLabel(n){if(!n)return'Inicio';const d=new Date(INICIO_PROJ);d.setDate(d.getDate()+(n-1)*7);return'S'+n+' '+d.getDate()+'/'+MES_ES[d.getMonth()];}
+function semFecha(n){const d=new Date(INICIO_PROJ);d.setDate(d.getDate()+(n-1)*7);return d.getDate()+'/'+MES_ES[d.getMonth()]+'/26';}
+const EVM_LABELS=['Inicio'].concat(Array.from({length:26},(_,i)=>semLabel(i+1)));
+
+// PV S-Curve baseline V1 (Cronograma 23/Jun/2026 — 83 actividades)
+const PV=[0,34.7,47.7,60.7,73.7,86.7,99.7,117.1,138.8,164.8,195.1,225.5,264.5,308.0,360.0,407.6,464.0,537.7,615.7,685.1,741.5,780.5,811.3,832.5,845.5,857.0,867.2];
+
+const EVM_FASES=[
+  {id:'1.1.1–1.1.4',nombre:'Negociación',         color:'#185FA5',wI:1, wF:1, inicio:'06/Jul/26',fin:'08/Jul/26',acts:4, bac:8.7},
+  {id:'1.1.5',       nombre:'Diseño e Ingeniería', color:'#0C447C',wI:2, wF:15,inicio:'09/Jul/26',fin:'14/Oct/26',acts:31,bac:60.3},
+  {id:'1.1.6',       nombre:'Compras',             color:'#27500A',wI:15,wF:16,inicio:'15/Oct/26',fin:'23/Oct/26',acts:3, bac:43.4},
+  {id:'1.1.8',       nombre:'Prod.Tableros Serv.', color:'#3B6D11',wI:9, wF:14,inicio:'03/Sep/26',fin:'07/Oct/26',acts:4, bac:86.7},
+  {id:'1.1.7',       nombre:'Producción Premset',  color:'#854F0B',wI:14,wF:23,inicio:'08/Oct/26',fin:'08/Dic/26',acts:4, bac:260.2},
+  {id:'1.1.9',       nombre:'Pruebas Calidad FAT', color:'#A32D2D',wI:14,wF:23,inicio:'08/Oct/26',fin:'10/Dic/26',acts:4, bac:26.0},
+  {id:'1.1.10',      nombre:'Entrega Suministros', color:'#639922',wI:23,wF:23,inicio:'11/Dic/26',fin:'11/Dic/26',acts:2, bac:17.7},
+  {id:'1.1.11',      nombre:'Construcción Civil',  color:'#185FA5',wI:17,wF:20,inicio:'26/Oct/26',fin:'20/Nov/26',acts:5, bac:173.4},
+  {id:'1.1.12',      nombre:'Montaje Eléctrico',   color:'#633806',wI:21,wF:26,inicio:'23/Nov/26',fin:'30/Dic/26',acts:11,bac:190.8},
+  {id:'1.1.13',      nombre:'Dossier Proyecto',    color:'#898781',wI:26,wF:26,inicio:'31/Dic/26',fin:'31/Dic/26',acts:3, bac:5.2},
+];
+const EVM_VERSIONES=[
+  {ver:'V1',fecha:'23/Jun/2026',archivo:'Doble_tiro_A1018_Cronograma_V1.pdf',acts:83,dur:'129 días',estado:'activa'},
+  {ver:'V2',fecha:null,archivo:null,acts:null,dur:null,estado:'pendiente'},
+];
+let EVM_CORTES=[
+  {sem:1,pct:4.0,ev:34.7,ac:34.7,obs:'Confirmación OC. Acta lanzamiento interna (FR-081) y externa con EPM. Anticipo 20% comprometido 08/Jul/2026.',ver:'V1'}
+];
+
+// ═══ EVM CÁLCULO ═══
+function calcEVM(sem,ev,ac){
+  var pv=PV[sem],spi=ev/Math.max(pv,.001),cpi=ev/Math.max(ac,.001);
+  var sv=+(ev-pv).toFixed(1),cv=+(ev-ac).toFixed(1);
+  var eac=+(BAC/Math.max(cpi,.001)).toFixed(1),etc=+(eac-ac).toFixed(1);
+  var tcpi=+((BAC-ev)/Math.max(eac-ac,.001)).toFixed(2);
+  return {pv,spi:+spi.toFixed(2),cpi:+cpi.toFixed(2),sv,cv,eac,etc,tcpi};
+}
+
+// ═══ CHARTS ═══
+var evmChart=null,indiceChart=null,varChart=null;
+function initEVMCharts(){
+  var pvLine=PV.map(function(v,i){return{x:i,y:v};});
+  var evPts=[{x:0,y:0}],acPts=[{x:0,y:0}];
+  EVM_CORTES.forEach(function(c){evPts.push({x:c.sem,y:c.ev});acPts.push({x:c.sem,y:c.ac});});
+  var eacLine=[];
+  if(EVM_CORTES.length){var last=EVM_CORTES[EVM_CORTES.length-1];var eac=calcEVM(last.sem,last.ev,last.ac).eac;eacLine=[{x:last.sem,y:last.ac},{x:N_SEM,y:eac}];}
+  var baseOpts={responsive:true,maintainAspectRatio:false,interaction:{mode:'index',intersect:false},plugins:{legend:{display:false},tooltip:{backgroundColor:'rgba(11,11,11,.88)',titleFont:{size:10,weight:'600'},bodyFont:{size:10},padding:8}}};
+  var xScale={type:'linear',min:0,max:N_SEM,ticks:{stepSize:2,callback:function(v){return'S'+v;},font:{size:10},color:'#898781'},grid:{color:'rgba(11,11,11,.05)'}};
+  // EVM Main
+  var c1=document.getElementById('evmChart');if(!c1)return;
+  if(evmChart)evmChart.destroy();
+  evmChart=new Chart(c1.getContext('2d'),{type:'line',data:{datasets:[
+    {label:'PV',data:pvLine,borderColor:'#005baa',backgroundColor:'rgba(0,91,170,.07)',fill:true,borderWidth:2.5,pointRadius:0,tension:.42,parsing:false},
+    {label:'EV',data:evPts,borderColor:'#3B6D11',fill:false,borderWidth:2.5,pointRadius:5,pointBackgroundColor:'#3B6D11',pointBorderColor:'#fff',pointBorderWidth:2,tension:.3,parsing:false},
+    {label:'AC',data:acPts,borderColor:'#854F0B',fill:false,borderWidth:2.5,pointRadius:5,pointBackgroundColor:'#854F0B',pointBorderColor:'#fff',pointBorderWidth:2,tension:.3,parsing:false},
+    {label:'EAC',data:eacLine,borderColor:'#A32D2D',fill:false,borderWidth:2,borderDash:[7,4],pointRadius:0,tension:.2,parsing:false},
+    {label:'BAC',data:[{x:0,y:867.2},{x:N_SEM,y:867.2}],borderColor:'#898781',fill:false,borderWidth:1.5,borderDash:[4,4],pointRadius:0,tension:0,parsing:false}
+  ]},options:{...baseOpts,plugins:{...baseOpts.plugins,tooltip:{...baseOpts.plugins.tooltip,callbacks:{title:function(it){return EVM_LABELS[Math.round(it[0].parsed.x)]||'';},label:function(it){return' '+it.dataset.label+': $'+it.parsed.y.toFixed(1)+'M';}}}},scales:{x:xScale,y:{min:0,max:950,ticks:{stepSize:100,callback:function(v){return'$'+v+'M';},font:{size:10},color:'#898781'},grid:{color:'rgba(11,11,11,.06)'}}}}});
+  // Indices
+  var spi=[{x:0,y:1}],cpi=[{x:0,y:1}];
+  EVM_CORTES.forEach(function(c){var e=calcEVM(c.sem,c.ev,c.ac);spi.push({x:c.sem,y:e.spi});cpi.push({x:c.sem,y:e.cpi});});
+  var c2=document.getElementById('indiceChart');if(!c2)return;
+  if(indiceChart)indiceChart.destroy();
+  indiceChart=new Chart(c2.getContext('2d'),{type:'line',data:{datasets:[
+    {label:'SPI',data:spi,borderColor:'#005baa',pointRadius:4,pointBackgroundColor:'#005baa',pointBorderColor:'#fff',pointBorderWidth:1.5,borderWidth:2,tension:.3,parsing:false},
+    {label:'CPI',data:cpi,borderColor:'#3B6D11',pointRadius:4,pointBackgroundColor:'#3B6D11',pointBorderColor:'#fff',pointBorderWidth:1.5,borderWidth:2,tension:.3,parsing:false},
+    {label:'',data:[{x:0,y:1},{x:N_SEM,y:1}],borderColor:'#c3c2b7',fill:false,borderWidth:1,borderDash:[4,3],pointRadius:0,tension:0,parsing:false}
+  ]},options:{...baseOpts,scales:{x:xScale,y:{ticks:{font:{size:10},color:'#898781',stepSize:.2},grid:{color:'rgba(11,11,11,.05)'}}}}});
+  // Varianzas
+  var svA=[],cvA=[],lbl=[];
+  EVM_CORTES.forEach(function(c){var e=calcEVM(c.sem,c.ev,c.ac);svA.push(e.sv);cvA.push(e.cv);lbl.push('S'+c.sem);});
+  var c3=document.getElementById('varChart');if(!c3)return;
+  if(varChart)varChart.destroy();
+  varChart=new Chart(c3.getContext('2d'),{type:'bar',data:{labels:lbl.length?lbl:['S0'],datasets:[
+    {label:'SV($M)',data:svA.length?svA:[0],backgroundColor:svA.map(function(v){return v>=0?'rgba(59,109,17,.7)':'rgba(163,45,45,.7)';}),borderRadius:4,barPercentage:.5},
+    {label:'CV($M)',data:cvA.length?cvA:[0],backgroundColor:cvA.map(function(v){return v>=0?'rgba(0,91,170,.7)':'rgba(163,45,45,.7)';}),borderRadius:4,barPercentage:.5}
+  ]},options:{...baseOpts,scales:{x:{ticks:{font:{size:10},color:'#898781'},grid:{display:false}},y:{ticks:{callback:function(v){return'$'+v+'M';},font:{size:9},color:'#898781'},grid:{color:'rgba(11,11,11,.05)'}}}}});
+}
+
+// ═══ UPDATE EVM KPIs ═══
+function updateEVMKPIs(){
+  if(!EVM_CORTES.length)return;
+  var last=EVM_CORTES[EVM_CORTES.length-1];
+  var e=calcEVM(last.sem,last.ev,last.ac);
+  var sC=function(v){return v>=0.95?'ok':v>=0.85?'wn':'bad';};
+  var sT=function(v){return v>=1.05?'Adelantado':v>=0.95?'En línea':'Atrasado';};
+  var cT=function(v){return v>=1.05?'Bajo costo':v>=0.95?'En costo':'Sobre costo';};
+  var vC=function(v){return v>=0?'var(--ok)':'var(--bad)';};
+  function setV(id,val,col){var el=document.getElementById(id);if(el){el.textContent=val;if(col)el.style.color=col;}}
+  function setPill(id,txt,cl){var el=document.getElementById(id);if(el){el.textContent=txt;el.className='pill p'+cl;}}
+  function setCard(idEl,cl){var el=document.getElementById(idEl);if(el&&el.closest('.kcard'))el.closest('.kcard').className='kcard b-'+cl;}
+  setV('evm-spi',e.spi.toFixed(2),e.spi>=.95?'var(--ok)':e.spi>=.85?'#854F0B':'var(--bad)');
+  setPill('evm-spi-pill',sT(e.spi),sC(e.spi)); setCard('evm-spi',sC(e.spi));
+  setV('evm-cpi',e.cpi.toFixed(2),e.cpi>=.95?'var(--ok)':e.cpi>=.85?'#854F0B':'var(--bad)');
+  setPill('evm-cpi-pill',cT(e.cpi),sC(e.cpi)); setCard('evm-cpi',sC(e.cpi));
+  setV('evm-sv',(e.sv>=0?'+':'')+'$'+Math.abs(e.sv).toFixed(1)+'M',vC(e.sv));
+  var svLbl=document.getElementById('evm-sv-lbl');if(svLbl){svLbl.textContent=e.sv>=0?'Adelantado':'Retraso';svLbl.style.color=vC(e.sv);}
+  setCard('evm-sv',e.sv>=0?'ok':'bad');
+  setV('evm-cv',(e.cv>=0?'+':'')+'$'+Math.abs(e.cv).toFixed(1)+'M',vC(e.cv));
+  var cvLbl=document.getElementById('evm-cv-lbl');if(cvLbl){cvLbl.textContent=e.cv>=0?'Bajo presupuesto':'Sobre presupuesto';cvLbl.style.color=vC(e.cv);}
+  setCard('evm-cv',e.cv>=0?'ok':'bad');
+  setV('evm-eac','$'+e.eac.toFixed(1)+'M','var(--epm)');
+  var d=document.getElementById('evm-eac-delta');if(d)d.textContent='BAC: $867.2M · Δ '+((e.eac-BAC)/BAC*100).toFixed(1)+'%';
+  setV('evm-etc','$'+e.etc.toFixed(1)+'M');
+  setV('evm-tcpi',e.tcpi.toFixed(2),e.tcpi<=1.1?'var(--ok)':e.tcpi<=1.2?'#854F0B':'var(--bad)');
+  setPill('evm-tcpi-pill',e.tcpi<=1.1?'Alcanzable':e.tcpi<=1.2?'Exigente':'Muy difícil',e.tcpi<=1.1?'ok':e.tcpi<=1.2?'wn':'bad');
+  // Chips
+  var fd=new Date(INICIO_PROJ);fd.setDate(fd.getDate()+(last.sem-1)*7);
+  setV('chip-sem','S'+last.sem+' · '+fd.getDate()+'/'+MES_ES[fd.getMonth()]+'/26');
+  setV('chip-pv','$'+e.pv.toFixed(1)+'M');setV('chip-ev','$'+last.ev.toFixed(1)+'M');
+  setV('chip-ac','$'+last.ac.toFixed(1)+'M');setV('chip-eac','$'+e.eac.toFixed(1)+'M');
+  setV('chip-pct',last.pct.toFixed(1)+'%');
+  setV('evm-hdr-sem','Sem '+last.sem+' · '+fd.getDate()+'/'+MES_ES[fd.getMonth()]+'/2026');
+  // Alert
+  var aEl=document.getElementById('evm-alerta'),aTxt=document.getElementById('evm-alerta-txt');
+  var ok=e.spi>=.95&&e.cpi>=.95;
+  if(aEl)aEl.className='alert '+(ok?'ao':'aw2');
+  if(aTxt)aTxt.innerHTML='Cronograma <strong>V1 activo</strong> · Sem '+last.sem+': <strong>EV $'+last.ev.toFixed(1)+'M · '+last.pct.toFixed(1)+'% · SPI '+e.spi.toFixed(2)+' · CPI '+e.cpi.toFixed(2)+'</strong>.'+(e.spi<.95?' <strong>⚠ SPI bajo umbral.</strong>':'')+(e.cpi<.95?' <strong>⚠ CPI bajo umbral.</strong>':'');
+  // Sync dashboard & KPI
+  syncGlobal(last,e);
+}
+
+function syncGlobal(last,e){
+  function sv(id,v){var el=document.getElementById(id);if(el)el.textContent=v;}
+  sv('dash-avance',last.pct.toFixed(1)+'%');
+  sv('dash-spi',e.spi.toFixed(2));sv('dash-cpi',e.cpi.toFixed(2));
+  sv('dash-ev','$'+last.ev.toFixed(1)+'M');sv('dash-eac','$'+e.eac.toFixed(1)+'M');
+  sv('kpi-spi',e.spi.toFixed(2));sv('kpi-cpi',e.cpi.toFixed(2));
+  sv('kpi-real',last.pct.toFixed(1)+'%');sv('kpi-eac','$'+e.eac.toFixed(1)+'M');
+  sv('kpi-cortes',EVM_CORTES.length);
+  var dSpi=document.getElementById('dash-spi');if(dSpi)dSpi.style.color=e.spi>=.95?'var(--ok)':e.spi>=.85?'#854F0B':'var(--bad)';
+  var dCpi=document.getElementById('dash-cpi');if(dCpi)dCpi.style.color=e.cpi>=.95?'var(--ok)':e.cpi>=.85?'#854F0B':'var(--bad)';
+  var kSpi=document.getElementById('kpi-spi');if(kSpi)kSpi.style.color=e.spi>=.95?'var(--ok)':e.spi>=.85?'#854F0B':'var(--bad)';
+  var kCpi=document.getElementById('kpi-cpi');if(kCpi)kCpi.style.color=e.cpi>=.95?'var(--ok)':e.cpi>=.85?'#854F0B':'var(--bad)';
+  // Sync Curva S real data
+  CVD.gral.real=[0];
+  EVM_CORTES.forEach(function(c){CVD.gral.real.push(c.pct);});
+  if(EVM_CORTES.length){var lastC=EVM_CORTES[EVM_CORTES.length-1];CVD.gral.ev=lastC.pct;CVD.gral.pv=CVD.gral.plan[lastC.sem]||0;}
+}
+
+// ═══ RENDER TABLAS EVM ═══
+function renderCortesTable(){
+  var tb=document.getElementById('body-cortes');if(!tb)return;
+  if(!EVM_CORTES.length){tb.innerHTML='<tr><td colspan="14" style="text-align:center;color:var(--tm);padding:1.5rem;font-size:12px">No hay cortes registrados</td></tr>';return;}
+  tb.innerHTML=EVM_CORTES.map(function(c,i){
+    var e=calcEVM(c.sem,c.ev,c.ac);
+    var sC=function(v){return v>=.95?'pok':v>=.85?'pwarn':'pbad';};
+    var vC=function(v){return v>=0?'diff-pos':'diff-neg';};
+    return '<tr><td><span class="pill pinfo">S'+c.sem+'</span></td><td style="font-size:10px;color:var(--tm)">'+semFecha(c.sem)+'</td><td style="font-weight:600">'+c.pct.toFixed(1)+'%</td><td style="color:var(--epm)">$'+e.pv.toFixed(1)+'M</td><td style="color:var(--ok);font-weight:700">$'+c.ev.toFixed(1)+'M</td><td style="color:#854F0B;font-weight:700">$'+c.ac.toFixed(1)+'M</td><td><span class="pill '+sC(e.spi)+'">'+e.spi.toFixed(2)+'</span></td><td><span class="pill '+sC(e.cpi)+'">'+e.cpi.toFixed(2)+'</span></td><td class="'+vC(e.sv)+'">'+(e.sv>=0?'+':'')+'$'+Math.abs(e.sv).toFixed(1)+'M</td><td class="'+vC(e.cv)+'">'+(e.cv>=0?'+':'')+'$'+Math.abs(e.cv).toFixed(1)+'M</td><td>$'+e.eac.toFixed(1)+'M</td><td style="font-size:11px;color:var(--ts);max-width:140px;word-break:break-word">'+c.obs+'</td><td><span class="pill pinfo">'+c.ver+'</span></td><td><button class="btdng" onclick="delCorte('+i+')"><i class="ti ti-trash" style="font-size:11px"></i></button></td></tr>';
+  }).join('');
+}
+
+function renderFasesTable(){
+  var now=EVM_CORTES.length?EVM_CORTES[EVM_CORTES.length-1].sem:0;
+  var tb=document.getElementById('body-fases');if(!tb)return;
+  tb.innerHTML=EVM_FASES.map(function(f){
+    var est,ecl;
+    if(now<f.wI){est='Pendiente';ecl='pgray';}else if(now<=f.wF){est='En curso';ecl='pwarn';}else{est='Completada';ecl='pok';}
+    var pve=Math.max(0,Math.min(PV[Math.min(now,f.wF)]-PV[Math.max(0,f.wI-1)],f.bac)).toFixed(1);
+    var pct=(f.bac/BAC*100).toFixed(1);
+    return '<tr><td><span class="pdot" style="background:'+f.color+'"></span><strong>'+f.nombre+'</strong><div style="font-size:10px;color:var(--tm)">'+f.id+'</div></td><td style="font-size:11px">S'+f.wI+'–S'+f.wF+'</td><td style="font-size:11px">'+f.inicio+'</td><td style="font-size:11px">'+f.fin+'</td><td style="text-align:center"><span class="pill pgray">'+f.acts+'</span></td><td style="font-weight:700">$'+f.bac.toFixed(1)+'M</td><td><div style="display:flex;align-items:center;gap:6px"><div class="pw" style="width:55px"><div class="pb pb-epm" style="width:'+pct+'%"></div></div><span style="font-size:11px">'+pct+'%</span></div></td><td style="font-size:11px;color:var(--epm)">$'+pve+'M</td><td><span class="pill '+ecl+'">'+est+'</span></td></tr>';
+  }).join('');
+}
+
+function renderVersionesTable(){
+  var tb=document.getElementById('body-versiones');if(!tb)return;
+  tb.innerHTML=EVM_VERSIONES.map(function(v){
+    if(v.estado==='activa')return'<tr><td><span class="vbadge vb-act">'+v.ver+'</span></td><td>'+v.fecha+'</td><td style="font-size:11px;color:var(--ts)">'+v.archivo+'</td><td style="text-align:center"><span class="pill pgray">'+v.acts+'</span></td><td>'+v.dur+'</td><td><span class="pill pok"><i class="ti ti-circle-check" style="font-size:10px"></i> Línea base activa</span></td></tr>';
+    return'<tr><td><span class="vbadge vb-pend">'+v.ver+'</span></td><td colspan="4" style="color:var(--tm);font-size:11px;font-style:italic">Pendiente — Se cargará cuando el contratista entregue la siguiente actualización</td><td><span class="pill pgray">Pendiente</span></td></tr>';
+  }).join('');
+}
+
+function updateEVMAll(){updateEVMKPIs();initEVMCharts();renderCortesTable();renderFasesTable();}
+
+// ═══ REGISTRAR CORTE ═══
+function autoCalcEV(){var p=parseFloat(document.getElementById('c-pct').value||0);var ev=+(BAC*p/100).toFixed(1);document.getElementById('c-ev-disp').value=isNaN(ev)?'':'$'+ev+'M';}
+function registrarCorte(){
+  var sem=parseInt(document.getElementById('c-sem').value);
+  var pct=parseFloat(document.getElementById('c-pct').value);
+  var ac=parseFloat(document.getElementById('c-ac').value);
+  var obs=document.getElementById('c-obs').value.trim();
+  var ver=document.getElementById('c-ver').value;
+  var msg=document.getElementById('corte-msg');
+  if(!sem){msg.textContent='⚠ Selecciona la semana';msg.style.color='var(--bad)';return;}
+  if(isNaN(pct)||pct<0||pct>100){msg.textContent='⚠ Avance 0–100%';msg.style.color='var(--bad)';return;}
+  if(isNaN(ac)||ac<0){msg.textContent='⚠ AC inválido';msg.style.color='var(--bad)';return;}
+  var ev=+(BAC*pct/100).toFixed(1);
+  var corte={sem:sem,pct:pct,ev:ev,ac:ac,obs:obs||'—',ver:ver};
+  var idx=EVM_CORTES.findIndex(function(c){return c.sem===sem;});
+  if(idx>=0)EVM_CORTES[idx]=corte;else{EVM_CORTES.push(corte);EVM_CORTES.sort(function(a,b){return a.sem-b.sem;});}
+  msg.textContent='✓ S'+sem+' guardada — EV $'+ev+'M';msg.style.color='var(--ok)';
+  ['c-pct','c-ac','c-obs'].forEach(function(id){document.getElementById(id).value='';});
+  document.getElementById('c-ev-disp').value='';document.getElementById('c-sem').value='';
+  setTimeout(function(){msg.textContent='';toggleEvmPanel('panel-corte');},1800);
+  updateEVMAll();
+}
+function delCorte(i){if(!confirm('¿Eliminar este corte?'))return;EVM_CORTES.splice(i,1);updateEVMAll();}
+function toggleEvmPanel(id){var el=document.getElementById(id);if(el)el.style.display=el.style.display==='none'?'block':'none';}
+function exportEVM(){
+  var rows=[['Semana','Fecha','% Avance','PV($M)','EV($M)','AC($M)','SPI','CPI','SV($M)','CV($M)','EAC($M)','Obs','Versión']];
+  EVM_CORTES.forEach(function(c){var e=calcEVM(c.sem,c.ev,c.ac);rows.push(['S'+c.sem,semFecha(c.sem),c.pct,e.pv,c.ev,c.ac,e.spi,e.cpi,e.sv,e.cv,e.eac,'"'+c.obs+'"',c.ver]);});
+  var csv=rows.map(function(r){return r.join(',');}).join('\n');
+  var blob=new Blob(['\ufeff'+csv],{type:'text/csv;charset=utf-8'});
+  var a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='EVM_CW387385_'+new Date().toISOString().slice(0,10)+'.csv';a.click();
+}
+
+// ═══ MOBILE NAV ═══
+function toggleSidebar(){
+  var sb=document.getElementById('sidebar'),bd=document.getElementById('backdrop');
+  if(sb)sb.classList.toggle('open');
+  if(bd)bd.classList.toggle('active');
+}
+function closeSidebarMobile(){
+  if(window.innerWidth<=750){
+    var sb=document.getElementById('sidebar'),bd=document.getElementById('backdrop');
+    if(sb)sb.classList.remove('open');
+    if(bd)bd.classList.remove('active');
+  }
+}
+// ═══ ORIGINAL FUNCTIONS ═══
+function sp(id,el){
+  document.querySelectorAll('.page').forEach(function(p){p.classList.remove('active');});
+  document.querySelectorAll('.ni, .bnav-item').forEach(function(n){n.classList.remove('active');});
+  var pg=document.getElementById('page-'+id);if(pg)pg.classList.add('active');
+  document.querySelectorAll('[data-page="'+id+'"]').forEach(function(n){n.classList.add('active');});
+  if(id==='curva'){setTimeout(function(){initCV('gral');updateCurvaNumbers('gral');},100);}
+  if(id==='evm'){setTimeout(function(){initEVMCharts();},120);}
+  if(id==='cronograma'){initCronograma();}
+  closeSidebarMobile();
+}
+function updateCurvaNumbers(k){
+  var d=CVD[k],pvEl=document.getElementById('cv-p'),evEl=document.getElementById('cv-r'),devEl=document.getElementById('cv-d');
+  if(!pvEl)return;
+  pvEl.textContent=d.pv+'%';evEl.textContent=d.ev+'%';
+  var dev=d.ev-d.pv;devEl.textContent=(dev>=0?'+':'')+dev+'%';
+  devEl.style.color=dev>=0?'#27500A':dev>=-5?'#854F0B':'#A32D2D';
+}
+function setCurva(k,btn){
+  document.querySelectorAll('.tbtn').forEach(function(b){b.classList.remove('active');});btn.classList.add('active');
+  var d=CVD[k];document.getElementById('cs-sub').textContent=d.sub;
+  document.getElementById('cv-p').textContent=d.pv+'%';document.getElementById('cv-r').textContent=d.ev+'%';
+  var dev=d.ev-d.pv,el=document.getElementById('cv-d');
+  el.textContent=(dev>=0?'+':'')+dev+'%';el.style.color=dev>=0?'#27500A':'#A32D2D';
+  updateCurvaNumbers(k);initCV(k);
+}
+function initCV(k){
+  var d=CVD[k],canvas=document.getElementById('cvChart');if(!canvas)return;
+  if(cvChart){cvChart.destroy();cvChart=null;}
+  var planData=d.plan.slice(0,CV_LBL.length);
+  var realData=d.real.concat(new Array(CV_LBL.length-d.real.length).fill(null));
+  cvChart=new Chart(canvas,{type:'line',data:{labels:CV_LBL,datasets:[
+    {label:'Planificado',data:planData,borderColor:'#005baa',borderWidth:2,fill:false,tension:.4,pointRadius:3,pointBackgroundColor:'#005baa'},
+    {label:'Real',data:realData,borderColor:'#D85A30',borderWidth:2,borderDash:[5,4],fill:false,tension:.4,pointRadius:4,pointBackgroundColor:'#D85A30'}
+  ]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:{callbacks:{label:function(c){return c.dataset.label+': '+c.parsed.y+'%';}}},},scales:{y:{min:0,max:100,ticks:{callback:function(v){return v+'%';},font:{size:10}},grid:{color:'#e8e8e4'}},x:{ticks:{font:{size:9},maxRotation:45},grid:{display:false}}}}});
+}
+var stMap={ok:'<span class="pill pok">Completado</span>',prog:'<span class="pill pwarn">En curso</span>',pend:'<span class="pill pgray">Pendiente</span>',riesgo:'<span class="pill pbad">Riesgo</span>'};
+function renderActs(){
+  var f=document.getElementById('flt-fase').value;
+  var list=f?ACTS.filter(function(a){return a.fase===f;}):ACTS;
+  document.getElementById('act-body').innerHTML=list.map(function(a){
+    var pct=a.prog;
+    return '<tr><td style="font-size:11px;color:var(--tm)">'+a.edt+'</td><td style="font-weight:600;font-size:12px">'+a.name+'</td><td><span class="pill pgray" style="font-size:10px">'+a.fase+'</span></td><td style="font-size:11px">'+a.inicio+'</td><td style="font-size:11px">'+a.fin+'</td><td style="font-size:11px">'+a.dur+'</td><td><div style="display:flex;align-items:center;gap:5px"><div class="pw" style="width:50px"><div class="pb '+(pct>60?'pb-ok':'pb-w')+'" style="width:'+pct+'%"></div></div><span style="font-size:10px">'+pct+'%</span></div></td><td>'+(stMap[a.estado]||'')+'</td></tr>';
+  }).join('');
+}
+function renderCP(){
+  document.getElementById('cp-list').innerHTML=CP_ITEMS.map(function(c){
+    return'<div class="cp-item"><div class="cp-dot" style="background:'+(c.status==='bad'?'#D85A30':c.status==='warn'?'#EF9F27':'#639922')+'"></div><div style="flex:1"><div style="font-size:13px;font-weight:600">'+c.name+'</div><div style="font-size:11px;color:var(--tm);margin-top:2px">Duración: '+c.dur+' · Holgura: 0 días</div><div style="font-size:11px;color:var(--ts);margin-top:2px">'+c.nota+'</div></div><span class="pill '+(c.status==='bad'?'pbad':c.status==='warn'?'pwarn':'pok')+'">'+(c.status==='bad'?'Crítica':c.status==='warn'?'Riesgo':'OK')+'</span></div>';
+  }).join('');
+}
+function renderItems(){
+  var f=(document.getElementById('flt-tipo').value||'').toLowerCase();
+  var list=f?ITEMS.filter(function(i){return i.tipo.toLowerCase().indexOf(f)>=0;}):ITEMS;
+  var tp={Bienes:'pinfo','Obra civil':'pgray','Consultoría y Servicios':'pwarn',Ambiental:'pok'};
+  document.getElementById('items-body').innerHTML=list.map(function(it){
+    var pct=it.cant>0?Math.round(it.eje/it.cant*100):0;
+    return'<tr><td style="font-size:11px;color:var(--tm)">'+it.id+'</td><td style="font-size:11px;font-weight:600">'+it.desc.slice(0,48)+(it.desc.length>48?'...':'')+'</td><td><span class="pill '+(tp[it.tipo]||'pgray')+'" style="font-size:10px">'+it.tipo.slice(0,8)+'</span></td><td style="font-size:11px">'+it.unidad+'</td><td style="font-size:11px;text-align:right">'+it.cant.toLocaleString('es-CO')+'</td><td style="font-size:11px;text-align:right">'+it.eje.toLocaleString('es-CO')+'</td><td><div style="display:flex;align-items:center;gap:4px"><div class="pw" style="width:45px"><div class="pb '+(pct>70?'pb-ok':'pb-w')+'" style="width:'+pct+'%"></div></div><span style="font-size:10px">'+pct+'%</span></div></td><td style="font-size:11px;text-align:right">$'+Math.round(it.vu).toLocaleString('es-CO')+'</td><td style="font-size:11px;font-weight:600;text-align:right">$'+Math.round(it.eje*it.vu).toLocaleString('es-CO')+'</td></tr>';
+  }).join('');
+  var total=ITEMS.reduce(function(s,i){return s+i.eje*i.vu;},0);
+  var cnt=ITEMS.filter(function(i){return i.eje>0;}).length;
+  var wc=ITEMS.filter(function(i){return i.cant>0;});
+  var avg=wc.length>0?Math.round(wc.reduce(function(s,i){return s+i.eje/i.cant*100;},0)/wc.length):0;
+  document.getElementById('cant-tot').textContent='$'+Math.round(total).toLocaleString('es-CO');
+  document.getElementById('cant-cnt').textContent=cnt;
+  document.getElementById('cant-avg').textContent=avg+'%';
+}
+function initCronograma(){
+  var sel=document.getElementById('cron-sem');if(!sel)return;
+  sel.innerHTML='<option value="">Seleccionar semana...</option>'+SEMANAS.map(function(s){return'<option value="'+s.n+'">'+s.label+'</option>';}).join('');
+  renderCronHist();
+}
+function handleDrop(e){e.preventDefault();document.getElementById('drop-zone').classList.remove('dragover');var file=e.dataTransfer.files[0];if(file)previewFile(file);}
+function handleFileSelect(input){if(input.files[0])previewFile(input.files[0]);}
+function previewFile(file){
+  archivoSeleccionado=file;
+  var ext=file.name.split('.').pop().toLowerCase();
+  var icons={xlsx:'ti-file-spreadsheet',xls:'ti-file-spreadsheet',pdf:'ti-file-type-pdf',mpp:'ti-calendar-time'};
+  var colors={xlsx:'#3B6D11',xls:'#3B6D11',pdf:'#A32D2D',mpp:'#005baa'};
+  var icon=document.getElementById('file-icon');icon.className='ti '+(icons[ext]||'ti-file');icon.style.color=colors[ext]||'#005baa';
+  document.getElementById('file-name').textContent=file.name;
+  document.getElementById('file-meta').textContent=(file.size/1024/1024).toFixed(2)+' MB · '+ext.toUpperCase();
+  document.getElementById('file-preview').style.display='block';
+  document.getElementById('upload-ok').style.display='none';document.getElementById('upload-err').style.display='none';
+}
+function clearFile(){archivoSeleccionado=null;document.getElementById('file-input').value='';document.getElementById('file-preview').style.display='none';}
+function subirCronograma(){
+  var semVal=document.getElementById('cron-sem').value;
+  var avance=document.getElementById('cron-avance').value;
+  var obs=document.getElementById('cron-obs').value.trim();
+  var okEl=document.getElementById('upload-ok'),errEl=document.getElementById('upload-err');
+  okEl.style.display='none';errEl.style.display='none';
+  if(!semVal){document.getElementById('upload-err-msg').textContent='Selecciona la semana';errEl.style.display='flex';return;}
+  if(!archivoSeleccionado){document.getElementById('upload-err-msg').textContent='Selecciona un archivo';errEl.style.display='flex';return;}
+  if(avance===''){document.getElementById('upload-err-msg').textContent='Ingresa el avance real (%)';errEl.style.display='flex';return;}
+  var sem=SEMANAS.find(function(s){return s.n===parseInt(semVal);});
+  var pctNum=parseInt(avance);
+  var entry={sem:parseInt(semVal),semLabel:sem.label,archivo:archivoSeleccionado.name,tamano:(archivoSeleccionado.size/1024/1024).toFixed(2)+' MB',avance:pctNum,obs:obs||'—',usuario:currentUser?currentUser.name:'Admin',fecha:new Date().toLocaleString('es-CO')};
+  var idx=cronHistorial.findIndex(function(h){return h.sem===entry.sem;});
+  if(idx>=0)cronHistorial[idx]=entry;else cronHistorial.push(entry);
+  cronHistorial.sort(function(a,b){return a.sem-b.sem;});
+  // Actualizar Curva S
+  CVD.gral.real=[0].concat(cronHistorial.map(function(h){return h.avance;}));
+  CVD.gral.ev=entry.avance;
+  var planIdx=Math.min(entry.sem,CVD.gral.plan.length-1);
+  CVD.gral.pv=CVD.gral.plan[planIdx];CVD.gral.dev=entry.avance-CVD.gral.pv;
+  // SINCRONIZAR CON EVM (AC = EV por defecto, ajustable en EVM)
+  var ev=+(BAC*pctNum/100).toFixed(1);
+  var evmCorte={sem:parseInt(semVal),pct:pctNum,ev:ev,ac:ev,obs:obs||'—',ver:'V1'};
+  var evmIdx=EVM_CORTES.findIndex(function(c){return c.sem===evmCorte.sem;});
+  if(evmIdx>=0)EVM_CORTES[evmIdx]=evmCorte;else{EVM_CORTES.push(evmCorte);EVM_CORTES.sort(function(a,b){return a.sem-b.sem;});}
+  updateEVMAll();
+  if(document.getElementById('page-curva').classList.contains('active')){updateCurvaNumbers('gral');initCV('gral');}
+  document.getElementById('upload-ok-msg').textContent='Cronograma "'+entry.archivo+'" cargado · '+sem.label+' · EV sincronizado $'+ev+'M';
+  okEl.style.display='flex';clearFile();
+  document.getElementById('cron-sem').value='';document.getElementById('cron-avance').value='';document.getElementById('cron-obs').value='';
+  renderCronHist();setTimeout(function(){okEl.style.display='none';},5000);
+}
+function renderCronHist(){
+  var tb=document.getElementById('cron-hist-body');if(!tb)return;
+  if(!cronHistorial.length){tb.innerHTML='<tr><td colspan="8" style="text-align:center;color:var(--tm);padding:1.5rem;font-size:12px">No hay cronogramas cargados aún</td></tr>';return;}
+  tb.innerHTML=cronHistorial.map(function(h,i){
+    var pct=h.avance,pbcls=pct>=70?'pb-ok':pct>=40?'pb-b':'pb-w';
+    var ev=+(BAC*pct/100).toFixed(1);
+    return'<tr><td><span class="pill pinfo">S'+h.sem+'</span></td><td style="font-size:12px;font-weight:600"><i class="ti ti-file" style="font-size:13px;color:var(--tm);margin-right:4px"></i>'+h.archivo+'<div style="font-size:10px;color:var(--tm)">'+h.tamano+'</div></td><td><div style="display:flex;align-items:center;gap:6px"><div class="pw" style="width:55px"><div class="pb '+pbcls+'" style="width:'+pct+'%"></div></div><span style="font-size:12px;font-weight:600">'+pct+'%</span></div></td><td style="color:var(--ok);font-weight:600;font-size:12px">$'+ev+'M</td><td style="font-size:12px;color:var(--ts)">'+h.obs+'</td><td style="font-size:12px">'+h.usuario+'</td><td style="font-size:11px;color:var(--tm)">'+h.fecha+'</td><td><button class="btdng" onclick="delCron('+i+')"><i class="ti ti-trash" style="font-size:12px"></i></button></td></tr>';
+  }).join('');
+}
+function delCron(i){if(!confirm('¿Eliminar este registro?'))return;cronHistorial.splice(i,1);renderCronHist();}
+function renderUsers(){
+  document.getElementById('ulist-box').innerHTML=users.map(function(u){
+    return'<div class="urow"><div class="uav" style="'+(u.rol==='admin'?'background:var(--epm-l);color:var(--epm-d)':'background:var(--okl);color:var(--ok)')+'">'+u.name.split(' ').map(function(x){return x[0];}).join('').slice(0,2)+'</div><div style="flex:1"><div style="font-size:13px;font-weight:600">'+u.name+'</div><div style="font-size:11px;color:var(--tm)">'+u.email+' · '+u.cargo+'</div></div><span class="'+(u.rol==='admin'?'role-a':'role-c')+'">'+(u.rol==='admin'?'Administrador':'Colaborador')+'</span>'+(u.id>1?'<button class="btdng" onclick="delUser('+u.id+')" style="margin-left:6px"><i class="ti ti-trash" style="font-size:12px"></i></button>':'')+'</div>';
+  }).join('');
+}
+function toggleUF(){document.getElementById('user-form').classList.toggle('hidden');document.getElementById('uf-err').classList.add('hidden');}
+function saveUser(){
+  var name=document.getElementById('uf-name').value.trim();var usr=document.getElementById('uf-usr').value.trim().toLowerCase();
+  var pwd=document.getElementById('uf-pass').value;var rol=document.getElementById('uf-rol').value;
+  var cargo=document.getElementById('uf-cargo').value.trim();var esp=document.getElementById('uf-esp').value;
+  var errEl=document.getElementById('uf-err'),errMsg=document.getElementById('uf-err-msg');
+  if(!name||!usr||!pwd){errMsg.textContent='Completa todos los campos';errEl.classList.remove('hidden');return;}
+  if(pwd.length<8){errMsg.textContent='Contraseña mínimo 8 caracteres';errEl.classList.remove('hidden');return;}
+  if(users.find(function(u){return u.usr===usr;})){errMsg.textContent='Usuario ya existe';errEl.classList.remove('hidden');return;}
+  users.push({id:users.length+1,usr:usr,pwd:pwd,name:name,rol:rol,cargo:cargo,esp:esp,email:usr+'@epm.com.co'});
+  toggleUF();['uf-name','uf-usr','uf-pass','uf-cargo'].forEach(function(id){document.getElementById(id).value='';});renderUsers();
+}
+function delUser(id){if(!confirm('¿Eliminar usuario?'))return;users=users.filter(function(u){return u.id!==id;});renderUsers();}
+
+// ═══ INIT ═══
+window.addEventListener('DOMContentLoaded',function(){
+  document.getElementById('tn').textContent=currentUser.name;
+  document.getElementById('te').textContent=currentUser.email;
+  document.getElementById('tav').textContent=currentUser.name.split(' ').map(function(x){return x[0];}).join('').slice(0,2).toUpperCase();
+  document.getElementById('nav-u').style.display=currentUser.rol==='admin'?'flex':'none';
+  // Populate EVM week selector
+  var sel=document.getElementById('c-sem');
+  SEMANAS.forEach(function(s){var o=document.createElement('option');o.value=s.n;o.textContent=s.label;sel.appendChild(o);});
+  renderActs();renderCP();renderItems();renderUsers();renderVersionesTable();
+  // Init charts
+  setTimeout(function(){initCV('gral');updateEVMAll();},150);
+});
+</script>
+</body>
+</html>
